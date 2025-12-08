@@ -1,17 +1,41 @@
-# Structural Long-Timeseries Learning
+# ==========================================
+# FILE: generate_docs.py
+# DESCRIPTION: Bootstraps the official NeurIPS README
+# ==========================================
+
+readme_content = """# Dialectical Regularization (DINN)
+
+**Official PyTorch Implementation** for the paper:  
+*"Dialectical Regularization: Learning Phase Transitions in Non-Stationary Time Series via Orthogonal Adversarial Objectives"*
 
 ## Abstract
-Traditional Transformers are "greedy": they optimize for the next token (+1$), often overfitting to local noise and missing long-term structural phase transitions. 
+Standard deep learning models (Transformers, LSTMs) optimize for local stationarity, often treating structural breaks as noise. This work introduces the **Dialectical Neural Network (DINN)**, a framework inspired by Hegelian logic to predict "Grey Swan" events (endogenous crises).
 
-This repository implements a **Non-Greedy Structural Learning** approach. By separating "momentum" (short-term) from "structure" (long-term) using orthogonal representations, we aim to predict endogenous regime shifts (financial crises) in non-stationary time series.
+By enforcing orthogonality between a "Thesis" branch (momentum/short-term) and an "Antithesis" branch (structural risk/long-term), the model learns to detect the **transition from quantitative accumulation to qualitative change** (Phase Transitions).
 
-## Setup & Usage (uv)
-This project uses `uv` for high-performance dependency management.
+## Project Structure
+
+```text
+├── configs/               # Hyperparameters & Data Configs
+├── src/
+│   ├── core/              # DINN Architecture (Losses, Layers, Models)
+│   └── benchmarks/        # Domain-specific experiments
+│       └── finance/       # Financial Crisis Prediction Benchmark
+
+# Reproduction (Finance Benchmark)
+
+This project uses `uv` for dependency management.
+
+## Setup Environment:
 
 ```bash
-# Install dependencies
 uv sync
 
-# Run training pipeline
-uv run python src/train.py
-```
+un the Economic Data Pipeline:
+Generates the datasets and Figures 2.12 & 2.15 referenced in the paper.
+
+bash
+Copy
+uv run python src/benchmarks/finance/pipeline.py
+
+Citation

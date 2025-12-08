@@ -1,0 +1,33 @@
+datasets:
+  # 1. PROFITS (Fig 2.12)
+  corporate_profits:
+    source: "fred"
+    start_date: "1947-01-01"
+    frequency: "QE"
+    save_path: "data/raw/corporate_profits.csv"
+    indicators:
+      PROFITS_BEFORE_TAX: "A446RC1Q027SBEA"
+      PROFITS_AFTER_TAX: "A448RC1Q027SBEA"
+      RECESSION: "USREC"
+
+  # 2. GLOBAL GROWTH (Fig 2.15)
+  # Usamos la serie de NIVEL (Constant US$) para calcular crecimiento
+  global_growth:
+    source: "fred"
+    start_date: "1961-01-01"
+    frequency: "A"  # Anual
+    save_path: "data/raw/global_growth.csv"
+    indicators:
+      WGDP_PC_LEVEL: "NYGDPPCAPKDWLD" # GDP per capita (constant 2015 US$)
+
+  # 3. CAPITAL & INVENTORY CYCLES (Over-accumulation)
+  capital_cycle:
+    source: "fred"
+    start_date: "1947-01-01"
+    frequency: "QE"
+    save_path: "data/raw/capital_cycle.csv"
+    indicators:
+      REAL_GDP: "GDPC1"       
+      REAL_INVESTMENT: "GPDIC1" 
+      REAL_INVENTORY_CHANGE: "CBIC1" 
+      RECESSION: "USREC"
