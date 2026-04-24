@@ -78,6 +78,21 @@ uv run python -m src.benchmarks.finance.pipeline
 
 ## Next Steps
 
-1. **Calibration**: fit $(\alpha, \beta, \delta, \gamma)$ with `scipy.integrate.odeint` + `scipy.optimize.minimize` against Z-Score data
+1. **Point calibration**: fit $(\alpha, \beta, \delta, \gamma)$ with `scipy.integrate.odeint` + `scipy.optimize.minimize` against Z-Score data
 2. **Validation**: compare theoretical orbit vs empirical data per individual cycle
 3. **Structural extension**: add interest rate as exogenous shock variable for monetary policy regime analysis
+
+## Paper Direction
+
+> *Flight to Quality: Bayesian Calibration of Lotka-Volterra Dynamics from Noisy Time Series*
+
+The economic cycles model is one application of a general method. Proposed structure:
+
+- **Method**: full posterior over $(\alpha, \beta, \delta, \gamma)$ via MCMC or variational inference — replaces point estimates with uncertainty-quantified trajectories
+- **Applications**: synthetic benchmarks → ecological dynamics (canonical LV) → macroeconomic cycles (this repo)
+
+The Bayesian generative model:
+
+$$p(\theta) \cdot p(\mathbf{x}_{1:T} \mid \theta, \text{ODE solver}) \propto p(\theta \mid \mathbf{x}_{1:T})$$
+
+where $\theta = (\alpha, \beta, \delta, \gamma)$ and the likelihood integrates the ODE forward from each proposed parameter sample.
