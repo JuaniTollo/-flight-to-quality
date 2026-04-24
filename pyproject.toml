@@ -9,8 +9,16 @@ dependencies = [
     "numpy>=2.3.5",
     "pandas>=2.3.3",
     "pandas-datareader>=0.10.0",
+    "plotly>=6.7.0",
     "pyyaml>=6.0.3",
     "scikit-learn>=1.7.2",
     "seaborn>=0.13.2",
     "torch>=2.9.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+    "jupyter>=1.1.1",
+    "nbconvert>=7.17.1",
 ]

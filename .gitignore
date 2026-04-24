@@ -7,15 +7,20 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
-# uv / Python
 .venv/
-__pycache__/
 *.pyc
 .env
 .DS_Store
 
 # Data & Artefacts
 data/
-outputs/
+output/
 *.pt
+
+# Misc
+*.pdf
+funding/
+DM2026-Curso/
+bibliography/
+.claude/settings.local.json
+contexto_repo_limpio.txt

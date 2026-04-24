@@ -27,7 +27,18 @@ datasets:
     frequency: "QE"
     save_path: "data/raw/capital_cycle.csv"
     indicators:
-      REAL_GDP: "GDPC1"       
-      REAL_INVESTMENT: "GPDIC1" 
-      REAL_INVENTORY_CHANGE: "CBIC1" 
+      REAL_GDP: "GDPC1"
+      REAL_INVESTMENT: "GPDIC1"
+      REAL_INVENTORY_CHANGE: "CBIC1"
+      RECESSION: "USREC"
+
+  # 4. LOTKA-VOLTERRA: Profits (Prey) vs Investment (Predator)
+  lotka_volterra:
+    source: "fred"
+    start_date: "1947-01-01"
+    frequency: "QE"
+    save_path: "data/raw/lotka_volterra.csv"
+    indicators:
+      PROFITS: "A053RC1Q027SBEA"   # Corporate Profits w/ IVA & CCAdj (NIPA)
+      INVESTMENT: "GPDI"           # Gross Private Domestic Investment
       RECESSION: "USREC"
