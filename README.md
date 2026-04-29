@@ -1,98 +1,121 @@
-# Modeling Economic Cycles with Lotka-Volterra
+# Flight to Quality — Profit-Investment Cycles in the US Economy
 
-Empirical implementation of José A. Tapia's endogenous profit-investment cycle model using predator-prey differential equations on US macroeconomic data (1947–present).
+Empirical study of US business cycles using José A. Tapia's reformulation of
+Goodwin (1967): a Lotka-Volterra predator-prey system with **corporate profits
+as prey** and **private investment as predator**, calibrated against quarterly
+FRED data from 1948 onwards.
 
-## Theoretical Basis
+This repository implements the data pipeline and the EDA — there is currently
+**no calibration code**; that is future work.
 
-Based on Tapia (*Six Crises of the World Economy*, Palgrave Macmillan, 2023), who replaces Goodwin's Employment/Wages variables with:
+## Theoretical setup
 
-| Role | Variable | Rationale |
-|------|----------|-----------|
-| **Prey (P)** | Corporate Profits | Self-expanding but suppressed by capital overaccumulation |
-| **Predator (I)** | Private Investment | Grows with profitability but destroys the conditions for its own reproduction |
+Following Tapia (*Six Crises of the World Economy*, Palgrave Macmillan, 2023):
 
-> *"Movements in profits are followed some quarters later by movements in investment in the same direction, and movements in investment are followed by movements in profits in the opposite direction."* — Tapia (2023, pp. 198–199)
+| Role         | Variable             | Rationale                                                         |
+|--------------|----------------------|-------------------------------------------------------------------|
+| Prey  (P)    | Corporate profits    | Self-expanding, but eventually suppressed by capital over-accumulation |
+| Predator (I) | Private investment   | Grows with profitability, then destroys the conditions for its own reproduction |
 
-### Differential System
+The continuous-time system
 
-$$\frac{dP}{dt} = \alpha P - \beta P I \qquad \frac{dI}{dt} = \delta P I - \gamma I$$
+$$\frac{dP}{dt} = \alpha P - \beta P I, \qquad \frac{dI}{dt} = \delta P I - \gamma I$$
 
-Parameters $(\alpha, \beta, \delta, \gamma)$ calibrated empirically via `scipy.optimize.minimize` on Z-Score preprocessed data.
+predicts anticlockwise orbits in (P, I) phase space — the property the EDA in
+this repo tests visually and via cross-correlation.
 
 ## Data
 
-All series downloaded from FRED (Federal Reserve Economic Data):
+All series are pulled from [FRED](https://fred.stlouisfed.org/) by
+`pandas-datareader`:
 
-| Variable | Ticker | Description |
-|----------|--------|-------------|
-| Profits (Prey) | `A053RC1Q027SBEA` | Corporate Profits w/ IVA & Capital Consumption Adjustments (NIPA, quarterly) |
-| Investment (Predator) | `GPDI` | Gross Private Domestic Investment (quarterly, billions USD) |
-| Reference cycles | `USREC` | NBER Recession Indicators |
+| Variable          | Ticker                | Description                                                |
+|-------------------|-----------------------|------------------------------------------------------------|
+| Profits (prey)    | `A053RC1Q027SBEA`     | Corporate profits w/ IVA & CCAdj (NIPA, quarterly)        |
+| Investment (pred.)| `GPDI`                | Gross private domestic investment (quarterly, billions $) |
+| Recession band    | `USREC`               | NBER recession indicator                                   |
 
-Period: **1947-Q1 – present** (300+ quarters, 10+ complete cycles).
+…plus three companion datasets used for the Tapia replication figures
+(`A446RC1Q027SBEA`, `A448RC1Q027SBEA`, `NYGDPPCAPKDWLD`, `GDPC1`, `GPDIC1`,
+`CBIC1`). All declared in
+[`configs/benchmarks/finance.yaml`](configs/benchmarks/finance.yaml).
 
-## Preprocessing
+## Repository layout
 
-```python
-# Remove long-run trend, expose cyclical dynamics
-df['P'] = df['PROFITS'].pct_change(4) * 100
-df['I'] = df['INVESTMENT'].pct_change(4) * 100
-
-# Z-Score normalization (required before optimizer — profits are ~2.5x more volatile than investment)
-df['P_z'] = (df['P'] - df['P'].mean()) / df['P'].std()
-df['I_z'] = (df['I'] - df['I'].mean()) / df['I'].std()
+```
+.
+├── configs/benchmarks/finance.yaml   # FRED tickers, dates, save paths
+├── src/
+│   ├── etl/                          # Extract / Transform / Load (see src/etl/README.md)
+│   │   ├── paths.py                  #   repo-rooted path helpers
+│   │   ├── loader.py                 #   FRED downloader, idempotent
+│   │   ├── processor.py              #   per-dataset feature engineering
+│   │   └── pipeline.py               #   orchestrator
+│   └── eda/                          # Plot scripts (one per concern)
+│       ├── eda_00_tapia_figures.py
+│       ├── eda_01_series_temporales.py
+│       ├── eda_02_rezagos_causalidad.py
+│       ├── eda_03_espacio_fases.py
+│       └── run_all.py
+├── tests/                            # pytest data-validation tests
+├── report/                           # Committed: EDA write-up + plots
+│   ├── README.md                     #   Read this for the analysis
+│   └── plots/*.png                   #   Generated figures
+├── data/                             # Gitignored: raw & processed CSVs
+└── pyproject.toml
 ```
 
 ## Quickstart
 
 ```bash
-uv sync
+uv sync                                   # install deps
 
-# Download and process all FRED data
-uv run python -m src.benchmarks.finance.pipeline
+uv run pytest                             # 13 tests, no FRED calls (synthetic data)
 
-# Then run notebooks in order
+uv run python -m src.etl.pipeline         # download + transform (skips cached files)
+uv run python -m src.etl.pipeline --force # force re-download
+
+uv run python -m src.eda.run_all          # regenerate report/plots/*.png
 ```
 
-## EDA Notebooks
+## Read the EDA
 
-| Notebook | Content |
-|----------|---------|
-| `00_tapia_figures.ipynb` | Replication of Tapia (2023) figures: corporate profits, world GDP growth, capital cycle |
-| `01_eda_series_temporales.ipynb` | YoY time series with NBER recession bands. Verifies profits peak and fall before investment |
-| `02_eda_rezagos_causalidad.ipynb` | Cross-correlation functions: Corr(P_t, I_{t−k}) and Corr(I_t, P_{t−k}). Profits lead investment by ~2 quarters; overaccumulation depresses profits ~6 quarters later |
-| `03_eda_espacio_fases.ipynb` | Z-Score phase space: anticlockwise orbits confirm Lotka-Volterra topology. Includes interactive Plotly animation (`output/notebooks/03_animacion_espacio_fases.html`) |
+The narrative analysis with embedded plots lives in
+**[`report/README.md`](report/README.md)**. It walks through:
 
-## Repository Structure
+1. Tapia replication figures (corporate profits, world growth, capital cycle)
+2. Time-series view: profits leading investment, with per-cycle zooms
+3. Cross-correlation: lead-lag at the aggregate and by NBER phase
+4. Phase space: z-score normalization, full orbit, per-cycle small-multiples
 
-```
-├── configs/benchmarks/finance.yaml   # FRED tickers, dates, paths
-├── notebooks/                        # EDA notebooks (executed, outputs embedded)
-├── src/benchmarks/finance/
-│   ├── loader.py                     # FRED API wrapper
-│   ├── processor.py                  # ETL transformations
-│   └── pipeline.py                   # Automated orchestrator (no args, runs all)
-├── pyproject.toml                    # Dependencies (uv)
-└── output/notebooks/                 # Generated figures and HTML (gitignored)
+## Tests
+
+```bash
+uv run pytest -q
 ```
 
-## Next Steps
+The test suite uses synthetic raw data (deterministic, seeded) so it doesn't
+hit FRED. It verifies:
 
-1. **Point calibration**: fit $(\alpha, \beta, \delta, \gamma)$ with `scipy.integrate.odeint` + `scipy.optimize.minimize` against Z-Score data
-2. **Validation**: compare theoretical orbit vs empirical data per individual cycle
-3. **Structural extension**: add interest rate as exogenous shock variable for monetary policy regime analysis
+- raw → processed transforms add the expected columns
+- z-score features have mean 0 / std 1
+- no NaN in the engineered columns of `lotka_volterra` processed CSV
+- the date range matches the configured `start_date`
+- repo-rooted path resolution is stable
 
-## Paper Direction
+## Status & roadmap
 
-> *Flight to Quality: Bayesian Calibration of Lotka-Volterra Dynamics from Noisy Time Series*
+What's here:
 
-The economic cycles model is one application of a general method. Proposed structure:
+- ETL pipeline (idempotent, configurable, tested)
+- Four EDA modules covering replication, lead-lag and phase-space topology
+- A committed report rendering the plots above
 
-- **Method**: full posterior over $(\alpha, \beta, \delta, \gamma)$ via MCMC or variational inference — replaces point estimates with uncertainty-quantified trajectories
-- **Applications**: synthetic benchmarks → ecological dynamics (canonical LV) → macroeconomic cycles (this repo)
+What's not (and is not promised to be):
 
-The Bayesian generative model:
+- ODE-constrained calibration of $(\alpha, \beta, \delta, \gamma)$
+- Any inference, Bayesian or otherwise
 
-$$p(\theta) \cdot p(\mathbf{x}_{1:T} \mid \theta, \text{ODE solver}) \propto p(\theta \mid \mathbf{x}_{1:T})$$
-
-where $\theta = (\alpha, \beta, \delta, \gamma)$ and the likelihood integrates the ODE forward from each proposed parameter sample.
+If/when calibration is added, it will live in a new module (e.g.
+`src/calibration/`) with its own README and its own tests, and this section
+will be updated.

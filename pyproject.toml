@@ -1,7 +1,7 @@
 [project]
-name = "structural-long-timeseries"
+name = "flight-to-quality"
 version = "0.1.0"
-description = "Add your description here"
+description = "Empirical study of US profit-investment cycles using Tapia's Lotka-Volterra economic model on FRED data."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -11,9 +11,6 @@ dependencies = [
     "pandas-datareader>=0.10.0",
     "plotly>=6.7.0",
     "pyyaml>=6.0.3",
-    "scikit-learn>=1.7.2",
-    "seaborn>=0.13.2",
-    "torch>=2.9.1",
 ]
 
 [dependency-groups]
@@ -21,4 +18,13 @@ dev = [
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",
     "nbconvert>=7.17.1",
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::FutureWarning",
 ]
