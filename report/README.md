@@ -122,7 +122,8 @@ LV is a *coupled* ODE system: profits and investment evolve together, not
 independently. A time-series plot shows each variable separately; the phase
 plane (P_z, I_z) shows their joint motion as a single trajectory — and that
 is where the topological signatures of an ODE (closed orbits, fixed points,
-limit cycles) actually live (Ramsay & Hooker 2017). For an LV system, the
+limit cycles) actually live (Ramsay & Hooker 2017, ch. 6 "Qualitative
+Behavior", §6.2–6.3, pp. 85–91). For an LV system, the
 trajectory should be a closed **anticlockwise** orbit around its fixed
 point. This section is the most direct visual test of the LV hypothesis.
 
