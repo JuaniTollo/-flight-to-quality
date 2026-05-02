@@ -6,10 +6,9 @@ Tapia's hypothesis: profitability is a leading indicator — it peaks and falls
 We render three views, because a 1-quarter lead is invisible on an axis with
 300+ quarters:
 
-  - 01_series_temporales.png            : full history, single row (overview)
-  - 01_series_temporales_split.png      : same data split into 3 rows
+  - 01_series_temporales_split.png      : full history split into 3 rows
   - 01_series_temporales.html           : interactive Plotly version (zoom/scroll)
-  - 01_zoom_ciclos.png                  : 3 hand-picked cycles, ~10 years each
+  - 01_zoom_ciclos.png                  : 5 post-war crises following Tapia (2023)
 
 Run:  uv run python -m src.eda.eda_01_series_temporales
 """
@@ -40,18 +39,7 @@ def main() -> None:
     df = pd.read_csv(DATA_PROCESSED / "lotka_volterra.csv", index_col=0, parse_dates=True)
     print(f"[EDA 01] {df.index[0].date()} → {df.index[-1].date()} | N={len(df)}")
 
-    # === A) Full history (overview) ===
-    fig, ax = plt.subplots(figsize=(14, 5))
-    _draw_panel(ax, df, title="Economic cycle: profits vs investment (Tapia — Lotka-Volterra)")
-    ax.legend(loc="upper right", frameon=True)
-    fig.text(0.08, -0.02,
-             "Source: FRED A053RC1Q027SBEA, GPDI, USREC.  At 313 quarters wide a 1Q lag is invisible — see split / interactive views below.",
-             fontsize=8, color="gray", style="italic")
-    fig.tight_layout()
-    fig.savefig(PLOTS_DIR / "01_series_temporales.png", dpi=200, bbox_inches="tight")
-    plt.close(fig)
-
-    # === B) Split view: 3 rows, ~26 years each, so 1Q gaps are readable ===
+    # === A) Split view: 3 rows, ~26 years each, so 1Q gaps are readable ===
     years = df.index.year
     edges = [years.min(), 1974, 2000, years.max() + 1]
     fig, axes = plt.subplots(3, 1, figsize=(14, 11))
@@ -113,14 +101,17 @@ def main() -> None:
     html_path = PLOTS_DIR / "01_series_temporales.html"
     fig_p.write_html(str(html_path), include_plotlyjs="cdn")
 
-    # === Per-cycle zoom ===
+    # === Per-cycle zoom: aligned with the 5 cycles in eda_03 (Tapia 2023) ===
     cycles = [
-        ("1965", "1975", "1970s crisis"),
-        ("1995", "2005", "Dot-com & 2001"),
-        ("2003", "2012", "GFC 2008"),
+        ("1967", "1973", "1970 recession"),
+        ("1978", "1984", "1980–82 crisis"),
+        ("1997", "2004", "Dot-com 2001"),
+        ("2004", "2012", "GFC 2008–09"),
+        ("2017", "2022", "COVID 2020"),
     ]
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4), sharey=False)
+    fig, axes = plt.subplots(2, 3, figsize=(16, 8), sharey=False)
+    axes = axes.flatten()
     for ax, (start, end, title) in zip(axes, cycles):
         mask = df.loc[start:end]
         ax.plot(mask.index, mask["PROFITS_YOY"], color="#c0392b", lw=2, label="Profits")
@@ -133,11 +124,16 @@ def main() -> None:
         ax.set_title(title, loc="left")
         ax.yaxis.set_major_formatter(mtick.FuncFormatter(lambda y, _: f"{y:.0f}%"))
     axes[0].legend(fontsize=9)
-    fig.suptitle("Per-cycle zoom: profits lead investment", y=1.02)
+    axes[-1].set_visible(False)
+    fig.suptitle(
+        "Per-cycle zoom — five post-war crises following Tapia (2023, "
+        "$\\it{Six\\ Crises\\ of\\ the\\ World\\ Economy}$)",
+        y=1.0,
+    )
     fig.tight_layout()
     fig.savefig(PLOTS_DIR / "01_zoom_ciclos.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
-    print(f"[EDA 01] wrote 3 PNGs + 1 HTML to {PLOTS_DIR}")
+    print(f"[EDA 01] wrote 2 PNGs + 1 HTML to {PLOTS_DIR}")
 
 
 if __name__ == "__main__":
