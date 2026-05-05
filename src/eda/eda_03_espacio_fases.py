@@ -8,7 +8,10 @@ Run:  uv run python -m src.eda.eda_03_espacio_fases
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from matplotlib.collections import LineCollection
+from matplotlib.patches import FancyArrowPatch
 
 from src.eda._style import DATA_PROCESSED, PLOTS_DIR, setup
 
@@ -111,28 +114,59 @@ def main() -> None:
     }
     fig, axes = plt.subplots(2, 3, figsize=(16, 10))
     axes = axes.flatten()
-    cycle_colors = ["#8e44ad", "#c0392b", "#2980b9", "#27ae60", "#e67e22"]
+    cycle_cmaps = ["Purples", "Reds", "Blues", "Greens", "Oranges"]
+    cycle_dark = ["#6c3483", "#922b21", "#1f618d", "#1e8449", "#b9770e"]
+    arrow_every = 6  # quarters between arrowheads (~1.5 years)
 
-    for ax, (label, (start, end)), color in zip(axes, cycles.items(), cycle_colors):
+    for ax, (label, (start, end)), cmap_name, dark in zip(
+        axes, cycles.items(), cycle_cmaps, cycle_dark
+    ):
         sub = df.loc[start:end]
         if sub.empty or len(sub) < 3:
             ax.set_visible(False)
             continue
-        ax.plot(sub["P_z"], sub["I_z"], color=color, lw=1.5, alpha=0.8)
-        mid = len(sub) // 2
-        ax.annotate("", xy=(sub["P_z"].iloc[mid + 1], sub["I_z"].iloc[mid + 1]),
-                    xytext=(sub["P_z"].iloc[mid], sub["I_z"].iloc[mid]),
-                    arrowprops=dict(arrowstyle="->", color=color, lw=2))
-        ax.scatter(sub["P_z"].iloc[0], sub["I_z"].iloc[0], color="green", s=60, zorder=5, label="start")
-        ax.scatter(sub["P_z"].iloc[-1], sub["I_z"].iloc[-1], color="red", s=60, marker="s", zorder=5, label="end")
+
+        x = sub["P_z"].to_numpy()
+        y = sub["I_z"].to_numpy()
+        points = np.array([x, y]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+        seg_norm = mcolors.Normalize(vmin=0, vmax=len(segments) - 1)
+        seg_cmap = plt.get_cmap(cmap_name)
+        # restrict colormap range so the lightest segments are still readable
+        seg_colors = seg_cmap(0.35 + 0.6 * seg_norm(np.arange(len(segments))))
+        lc = LineCollection(segments, colors=seg_colors, linewidths=1.6, alpha=0.9)
+        ax.add_collection(lc)
+
+        for i in range(arrow_every, len(x) - 1, arrow_every):
+            arrow = FancyArrowPatch(
+                (x[i - 1], y[i - 1]), (x[i], y[i]),
+                arrowstyle="-|>,head_length=5,head_width=3.5",
+                mutation_scale=1.6,
+                color=dark, lw=0, alpha=0.85, zorder=4,
+            )
+            ax.add_patch(arrow)
+
+        ax.scatter(x[0], y[0], color="#27ae60", s=70, zorder=5,
+                   edgecolor="white", linewidth=1.2, label="start")
+        ax.scatter(x[-1], y[-1], color="#c0392b", s=70, marker="s", zorder=5,
+                   edgecolor="white", linewidth=1.2, label="end")
         ax.axhline(0, color="black", lw=0.6)
         ax.axvline(0, color="black", lw=0.6)
-        ax.set_title(label, loc="left")
+        pad = 0.15
+        ax.set_xlim(x.min() - pad * (x.max() - x.min()),
+                    x.max() + pad * (x.max() - x.min()))
+        ax.set_ylim(y.min() - pad * (y.max() - y.min()),
+                    y.max() + pad * (y.max() - y.min()))
+        ax.set_title(f"{label}  ({sub.index[0].year}–{sub.index[-1].year})", loc="left")
         ax.set_xlabel("Profits z-score")
         ax.set_ylabel("Investment z-score")
-        ax.legend(fontsize=8)
+        ax.legend(fontsize=8, loc="best")
     axes[-1].set_visible(False)
-    fig.suptitle("Per-cycle z-score orbits — anticlockwise rotation = Lotka-Volterra topology", y=1.01)
+    fig.suptitle(
+        "Per-cycle z-score orbits — arrows show direction; "
+        "anticlockwise rotation = Lotka-Volterra topology",
+        y=1.01,
+    )
     fig.tight_layout()
     fig.savefig(PLOTS_DIR / "03_orbitas_zscore_por_ciclo.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
