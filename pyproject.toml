@@ -10,7 +10,9 @@ dependencies = [
     "pandas>=2.3.3",
     "pandas-datareader>=0.10.0",
     "plotly>=6.7.0",
+    "python-docx>=1.2.0",
     "pyyaml>=6.0.3",
+    "statsmodels>=0.14.6",
 ]
 
 [dependency-groups]
