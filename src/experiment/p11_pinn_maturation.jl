@@ -25,7 +25,7 @@
 # Parte A: VALIDACIÓN EN SINTÉTICO — recupera un lag conocido (4·θ*) midiendo error %.
 # Parte B: DATOS REALES — estima el lag de maduración sobre una ventana representativa.
 #
-# Corre:  julia --project=<entorno con DifferentialEquations, Lux, Optimisers, Zygote> \
+# Corre:  julia --project=julia \
 #               src/experiment/p11_pinn_maturation.jl
 # ============================================================
 using DifferentialEquations, Lux, Optimisers, Zygote, Random, Statistics, Printf, DelimitedFiles
