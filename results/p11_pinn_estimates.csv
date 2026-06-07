@@ -1,0 +1,4 @@
+caso,lag_trim,lag_anios,a,b,c,d,k,r2
+sintetico_verdadero,4.000,1.000,,,,,,
+sintetico_recuperado,1.856,0.464,,,,,,
+real,0.232,0.058,2.6080,2.0144,-0.0599,-2.0418,1.9842,0.644

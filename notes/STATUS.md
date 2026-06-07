@@ -79,13 +79,19 @@ calibración por **PINN inversa** (P11) usa la formulación de convolución del 
 (la solución analítica de la cadena), que vuelve el inverso bien puesto — la versión con
 latentes libres no lo es.
 
-**Estado honesto del PINN (al cierre de la sesión):** la formulación de convolución
-**identifica el feedback `k`** (sintético: k̂≈0.85 vs 1.1 verdadero; la versión con latentes
-daba k→−0.1), pero **el lag se recupera con sesgo** (sintético: lag verdadero 4 trim →
-estimado ~1.9, error ~50%). Ítem abierto: resolver el sesgo (probable tradeoff residual
-k–μ y/o discretización del kernel Gamma vs la cadena continua). El lag central ~1 año está
-respaldado por los métodos NO-PINN (CCF, distributed-lag, VAR(p≥4)); el PINN es la
-calibración diferenciable a afinar, no la fuente principal de ese número.
+**Estado honesto del PINN (al cierre de la sesión; números en `results/p11_pinn_estimates.csv`):**
+- **Sintético:** la convolución **identifica `k`** (k̂≈0.85 vs 1.1; la versión con latentes
+  daba k→−0.1) pero **el lag se recupera con sesgo** (4 trim verdadero → 1.86, error 54%).
+- **Datos reales:** **el lag COLAPSA a ~0** (0.23 trim) con parámetros no físicos
+  (d=−2.0 = amortiguamiento negativo) y L_data alto → la red **no representa** la serie de
+  145 trim (spectral bias en ventana larga) y el lag queda sin anclar.
+
+⇒ **El PINN NO es la fuente del lag.** El lag central ~1 año está respaldado por los métodos
+NO-PINN (CCF, distributed-lag, VAR(p≥4), filtro OLS de P11). El PINN es la calibración
+diferenciable a afinar. **Cómo seguir:** (1) ajustar por **ventanas cortas por crisis**
+(no 145 trim) para evitar spectral bias; (2) red con **features de Fourier**; (3) anclar
+`k`/usar perfil de verosimilitud en μ; (4) recién con la recuperación sintética limpia,
+leer el lag real.
 
 ## 6. Próximos pasos (priorizados)
 
