@@ -42,6 +42,10 @@ contemporáneo lag0 ≈ +0.6 (dominante, ~35% var); feedback de maduración cent
   Tapia Granados (2012) con método independiente (estudio de evento).
 - El feedback de maduración tiene **lag central ~1 año, identificable** (convergencia de
   CCF, distributed-lag, VAR(p≥4), jerárquico). Lo captura un **kernel de lag distribuido**.
+- **Estabilidad:** el *centro* del lag es **estable entre crisis** (lag por crisis: media
+  4.2, sd ~0.9 trim), pero la *fuerza* del acople es **no-estacionaria** (ventana móvil:
+  −0.72 a +0.25). Y los parámetros de los osciladores LV/FN son inestables entre ciclos
+  (P4, CV≈1). ⇒ lo estructural-estable es el lag, no la intensidad ni los params del oscilador.
 - Modelo físico de **cadena de maduración** (P11): ODE diferenciable; el lag de
   maduración (~1 año) es un parámetro físico estimable.
 
@@ -96,6 +100,10 @@ calibración diferenciable a afinar, no la fuente principal de ese número.
    medir cobertura del IC del lag — convierte el muro en resultado positivo.
 3. **DDE diferenciable + capa jerárquica** (partial pooling del lag entre crisis) por
    autodiff/adjoint, reportando sensibilidad al prior del ancho.
+4. **Diagnóstico formal de estabilidad del lag/kernel por crisis** (pieza dedicada, falta):
+   estimar μ por episodio con IC + leave-one-out (¿el lag se sostiene al excluir cada
+   crisis?). Es la validación análoga-a-holdout para un parámetro estructural. La data está
+   lista (12 crisis con ventana completa, niveles para QoQ).
 
 ## 7. Reproducir / correr
 
