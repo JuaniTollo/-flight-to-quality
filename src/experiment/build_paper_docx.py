@@ -168,6 +168,65 @@ def main():
            "by signal strength and episode count, not by tuning. Pushing past it requires new data, "
            "not a reparameterisation.")
 
+    # ---------------- Apéndices ----------------
+    def table(doc, header, rows):
+        t = doc.add_table(rows=1, cols=len(header)); t.style = "Light Grid Accent 1"
+        for j, h in enumerate(header):
+            run = t.rows[0].cells[j].paragraphs[0].add_run(h); run.bold = True; run.font.size = Pt(9)
+        for row in rows:
+            cells = t.add_row().cells
+            for j, v in enumerate(row):
+                r = cells[j].paragraphs[0].add_run(v); r.font.size = Pt(9)
+
+    H(doc, "Appendix A. Robustness and falsification battery", 1)
+    P(doc, "Table A1 collects the auxiliary tests. The location of the lag (≈5 quarters) is stable "
+           "within the difference family (QoQ, Δlog) and to leave-one-crisis-out (Fig. A1, left; "
+           "pooled μ≈4.7, span 0.62), though per-crisis CIs are wide because identification emerges "
+           "only by pooling. The negative lobe is not a clean crisis-specific signature: a kernel "
+           "placebo finds it roughly as often off-crisis, and a VAR(p≥4) reproduces it from its "
+           "coefficients (Fig. 3). YoY both inflates the magnitude ~2× and shifts the apparent lag "
+           "(to ~2 quarters); two-sided cycle filters collapse it to a contemporaneous term — so we "
+           "report QoQ throughout (Fig. A1, right).")
+    table(doc, ["Test", "Question", "Result"], [
+        ["Transform robustness", "lag robust to transform?", "μ*≈5q (QoQ/Δlog); YoY→2q; filters→1q"],
+        ["Lag stability / LOO", "lag stable across crises?", "pooled μ≈4.7q; LOO span 0.62q; all in CI"],
+        ["Hierarchical pooling", "population lag & spread", "μ_pop≈4.9q [4.4,5.5]; spread contested"],
+        ["Kernel placebo", "is the 4–5q lobe crisis-specific?", "ubiquitous (appears off-crisis too)"],
+        ["VAR(p) Lyapunov", "does a linear VAR reproduce it?", "yes for p≥4 ⇒ obs. equivalence"],
+        ["Pooled-dynamics placebo", "is shared crisis dynamics special?", "preliminary: ratios ≈ crisis ⇒ not special"],
+    ])
+    P(doc, "Table A1. Auxiliary robustness and falsification tests.", size=9, italic=True)
+    fig(doc, "p12_lag_stability.png",
+        "Figure A1a. Per-crisis maturation lag with leave-one-crisis-out: the pooled lag does not "
+        "depend on any single episode.", width=5.0)
+    fig(doc, "p12_transform_robustness.png",
+        "Figure A1b. Estimated lag location under different transforms: stable within the difference "
+        "family; shifted by YoY and by two-sided cycle filters.", width=5.0)
+
+    H(doc, "Appendix B. Inverse-PINN variants and a stability check", 1)
+    P(doc, "The maturation lag is recoverable by the differentiable inverse only when the surrogate "
+           "network can represent the series and the parameters are well-posed (Table B1). A plain "
+           "network on the long window suffers spectral bias and the lag collapses; per-crisis "
+           "pooling fixes the fit (R²=0.86) but not the lag; only Fourier-feature inputs recover the "
+           "lag cleanly (8.9% synthetic error, 0.98 years real). A bifurcation analysis of the "
+           "calibrated system (Fig. B1) finds no delay-induced Hopf instability: the instability comes "
+           "from low damping, not the lag, and the structural fit disagrees with the distributed-lag "
+           "estimate on μ. We therefore do not advance an 'endogenous delayed-feedback instability' "
+           "claim — it would require the stronger identification a panel or micro gestation data "
+           "could provide.")
+    table(doc, ["Variant", "Synthetic (true 4q)", "Real lag", "Verdict"], [
+        ["Single-shooting / convolution", "1.86q (54% err)", "collapses to 0.23q, non-physical", "fails"],
+        ["Per-crisis pooled", "1.64q (59% err)", "0.84q (R²=0.86)", "fits, lag collapses"],
+        ["Profile-likelihood in μ", "—", "inconclusive", "unstable"],
+        ["Fourier features", "4.36q (8.9%)", "3.90q = 0.98yr (R²=1)", "recovers"],
+    ])
+    P(doc, "Table B1. Inverse-PINN variants; only Fourier-feature inputs both fit and recover the lag.",
+      size=9, italic=True)
+    fig(doc, "p13_bifurcation.png",
+        "Figure B1. Stability of the calibrated maturation system: no delay-induced Hopf (left), and "
+        "the Hopf boundary in (μ, k) with the estimate marked (right). The mechanistic 'instability' "
+        "reading is not supported by these data.", width=5.6)
+
     H(doc, "References", 1)
     refs = [
         "Almon, S. (1965). The distributed lag between capital appropriations and expenditures. Econometrica 33(1), 178–196.",

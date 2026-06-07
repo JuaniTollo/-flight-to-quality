@@ -165,6 +165,89 @@ bias and ill-posedness of classical calibration. The robust, transferable result
 while its width and its separation from a linear model are not---a boundary set by signal strength
 and episode count, not by tuning. Pushing past it requires new data, not a reparameterisation.
 
+\appendix
+
+\section{Robustness and falsification battery}
+\label{app:robust}
+Table~\ref{tab:robust} collects the auxiliary tests. Two points are worth stressing. First, the
+\emph{location} of the lag ($\approx\!5$ quarters) is stable within the difference family
+(QoQ, $\Delta\log$) and to leave-one-crisis-out (Fig.~\ref{fig:stab}, left; pooled
+$\mu\approx4.7$, span $0.62$), although per-crisis confidence intervals are wide because the
+feedback is weak and identification emerges only by pooling. Second, the negative lobe is
+\emph{not} a clean crisis-specific signature: a kernel placebo over non-crisis windows finds it
+roughly as often off-crisis, and a $\mathrm{VAR}(p\!\ge\!4)$ reproduces it from its coefficients
+(main text, Fig.~3). The year-over-year transform both inflates the magnitude $\sim2\times$ and
+shifts the apparent lag (to $\sim2$ quarters), and two-sided cycle filters (HP, band-pass)
+collapse it to a contemporaneous term---so we report QoQ throughout (Fig.~\ref{fig:stab}, right).
+
+\begin{table}[h]\centering\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Test & Question & Result \\
+\midrule
+Transform robustness & lag location robust to transform? & $\mu^\star\!\approx\!5$q (QoQ/$\Delta\log$); YoY$\to$2q; filters$\to$1q \\
+Lag stability / LOO & lag stable across crises? & pooled $\mu\!\approx\!4.7$q; LOO span $0.62$q; all in CI \\
+Hierarchical pooling & population lag \& spread & $\mu_{\text{pop}}\!\approx\!4.9$q $[4.4,5.5]$; spread contested \\
+Kernel placebo & is the 4--5q lobe crisis-specific? & ubiquitous (appears off-crisis too) \\
+VAR$(p)$ Lyapunov & does a linear VAR reproduce it? & yes for $p\!\ge\!4$ $\Rightarrow$ obs.\ equivalence \\
+Pooled-dynamics placebo & is shared crisis dynamics special? & preliminary: ratios $\approx$ crisis $\Rightarrow$ not special \\
+\bottomrule
+\end{tabular}
+\caption{Auxiliary robustness and falsification tests. The lag's centre is robust; its
+crisis-specificity and its separation from a linear model are not.}
+\label{tab:robust}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.49\linewidth]{p12_lag_stability.png}\hfill
+\includegraphics[width=0.49\linewidth]{p12_transform_robustness.png}
+\caption{Left: per-crisis maturation lag with leave-one-crisis-out (the pooled lag does not
+depend on any single episode). Right: estimated lag location under different transforms; stable
+within the difference family, shifted by YoY and by two-sided cycle filters.}
+\label{fig:stab}
+\end{figure}
+
+\section{Inverse-PINN variants and a stability check}
+\label{app:pinn}
+The maturation lag is recoverable by the differentiable inverse only when the surrogate network
+can represent the series and the parameters are well-posed. Table~\ref{tab:pinn} compares four
+variants on synthetic data (true lag $4$ quarters) and on the real window. A plain network on the
+long window suffers spectral bias and the lag collapses; per-crisis pooling fixes the fit
+($\bar R^2\!=\!0.86$) but not the lag; only \emph{Fourier-feature} inputs recover the lag cleanly
+($8.9\%$ synthetic error, $0.98$ years real). Finally, a bifurcation analysis of the calibrated
+system (Fig.~\ref{fig:bif}) finds \emph{no} delay-induced Hopf instability: the system's
+instability comes from low damping, not from the lag, and the structural fit even disagrees with
+the distributed-lag estimate on $\mu$. We therefore do not advance an ``endogenous
+delayed-feedback instability'' claim---it would require the stronger identification that a panel
+or micro gestation data could provide.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Variant & Synthetic (true $4$q) & Real lag & Verdict \\
+\midrule
+Single-shooting / convolution & $1.86$q ($54\%$ err) & collapses to $0.23$q, non-physical & fails \\
+Per-crisis pooled & $1.64$q ($59\%$ err) & $0.84$q ($\bar R^2\!=\!0.86$) & fits, lag collapses \\
+Profile-likelihood in $\mu$ & --- & inconclusive & unstable \\
+\textbf{Fourier features} & $\mathbf{4.36}$\textbf{q} $\mathbf{(8.9\%)}$ & $\mathbf{3.90}$\textbf{q}$=\mathbf{0.98}$\textbf{yr} ($R^2\!=\!1$) & \textbf{recovers} \\
+\bottomrule
+\end{tabular}
+\caption{Inverse-PINN variants. Only Fourier-feature inputs both fit the series and recover the
+maturation lag; the others fail through spectral bias or the $k$--$\mu$ trade-off.}
+\label{tab:pinn}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.84\linewidth]{p13_bifurcation.png}
+\caption{Stability of the calibrated maturation system. Left: maximum $\mathrm{Re}(\lambda)$ vs
+the lag $\mu$; no zero-crossing, i.e.\ no delay-induced Hopf. Right: the Hopf boundary in
+$(\mu,k)$ with the estimate marked. The mechanistic ``instability'' reading is not supported by
+these data.}
+\label{fig:bif}
+\end{figure}
+
 \begin{thebibliography}{9}\small
 \bibitem{almon} Almon, S. (1965). The distributed lag between capital appropriations and
 expenditures. \emph{Econometrica} 33(1), 178--196.
