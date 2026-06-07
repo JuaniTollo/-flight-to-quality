@@ -5,8 +5,16 @@ Goodwin (1967): a Lotka-Volterra predator-prey system with **corporate profits
 as prey** and **private investment as predator**, calibrated against quarterly
 FRED data from 1948 onwards.
 
-This repository implements the data pipeline and the EDA — there is currently
-**no calibration code**; that is future work.
+The repository implements the data pipeline, the EDA, and a sequence of modelling
+experiments (`src/experiment/`, pieces P1–P11) that test the Lotka-Volterra
+formulation and develop an alternative. **Main finding:** the fixed-phase
+predator-prey oscillator does not capture the cycle; the profit→investment
+overaccumulation feedback is a **distributed maturation delay centred at ~1 year**,
+modelled with a physical maturation-chain ODE calibrated by an inverse PINN.
+
+- Orientation, what was tried, and how to continue: [`notes/STATUS.md`](notes/STATUS.md).
+- Quantitative findings (P1–P11): [`EXPERIMENT.md`](EXPERIMENT.md).
+- Identifiability analysis of the distributed-lag kernel: [`notes/P10_CONSOLIDADO.md`](notes/P10_CONSOLIDADO.md).
 
 ## Theoretical setup
 
@@ -51,17 +59,24 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 │   │   ├── loader.py                 #   FRED downloader, idempotent
 │   │   ├── processor.py              #   per-dataset feature engineering
 │   │   └── pipeline.py               #   orchestrator
-│   └── eda/                          # Plot scripts (one per concern)
-│       ├── eda_00_tapia_figures.py
-│       ├── eda_01_series_temporales.py
-│       ├── eda_02_rezagos_causalidad.py
-│       ├── eda_03_espacio_fases.py
-│       └── run_all.py
+│   ├── eda/                          # Plot scripts (one per concern)
+│   │   └── …                         #   replication, lead-lag, phase space
+│   └── experiment/                   # Modelling experiments P1–P11 (Python + Julia)
+│       ├── common.py                 #   data, NBER dating, oscillators, fits
+│       ├── p7_overaccumulation.py    #   CCF (P7)
+│       ├── p8_event_study.py         #   crisis event study (P8)
+│       ├── p9_*.py                   #   crisis-regime, ablation, placebo, pooled (P9)
+│       ├── p10_*.py                  #   distributed-lag / stochastic-delay bench (P10)
+│       ├── p11_physical_delay.py     #   maturation model + identifiability (P11)
+│       ├── models.jl                 #   oscillators: solver + inverse PINN
+│       └── p11_pinn_maturation.jl    #   inverse PINN of the maturation model
+├── julia/                            # Pinned Julia env (Project.toml + Manifest.toml)
+├── notes/                            # STATUS.md, P10_CONSOLIDADO.md, method notes
+├── results/                          # Committed numeric artefacts (e.g. PINN estimates)
 ├── tests/                            # pytest data-validation tests
 ├── report/                           # Committed: EDA write-up + plots
-│   ├── README.md                     #   Read this for the analysis
-│   └── plots/*.png                   #   Generated figures
-├── data/                             # Gitignored: raw & processed CSVs
+├── data/                             # Versioned: raw & processed CSVs (FRED snapshot)
+├── EXPERIMENT.md                     # Quantitative findings P1–P11
 └── pyproject.toml
 ```
 
@@ -107,15 +122,18 @@ hit FRED. It verifies:
 
 What's here:
 
-- ETL pipeline (idempotent, configurable, tested)
-- Four EDA modules covering replication, lead-lag and phase-space topology
-- A committed report rendering the plots above
+- ETL pipeline (idempotent, configurable, tested) + EDA modules + committed report.
+- Modelling experiments P1–P11 (`src/experiment/`): oscillator fits (solver + inverse
+  PINN), dynamical evaluation, cross-correlation, crisis event study, distributed-lag /
+  stochastic-delay bench, and a physical maturation-delay model.
+- Pinned environments for exact reproduction: `uv.lock` (Python) and `julia/` (Julia).
 
-What's not (and is not promised to be):
+Current direction and open work (full detail in [`notes/STATUS.md`](notes/STATUS.md)):
 
-- ODE-constrained calibration of $(\alpha, \beta, \delta, \gamma)$
-- Any inference, Bayesian or otherwise
+- **Affirmative result:** distributed maturation delay (~1 year) in the profit→investment
+  feedback; physical maturation-chain model captures it; fixed-phase oscillators do not.
+- **Open:** finish the inverse-PINN calibration of the maturation model; map the
+  identifiability frontier in synthetic; differentiable DDE + hierarchical pooling.
 
-If/when calibration is added, it will live in a new module (e.g.
-`src/calibration/`) with its own README and its own tests, and this section
-will be updated.
+For where the project has been, what was tried, what to reuse and what to avoid re-trying,
+read **[`notes/STATUS.md`](notes/STATUS.md)**.
