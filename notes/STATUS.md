@@ -93,6 +93,17 @@ diferenciable a afinar. **Cómo seguir:** (1) ajustar por **ventanas cortas por 
 `k`/usar perfil de verosimilitud en μ; (4) recién con la recuperación sintética limpia,
 leer el lag real.
 
+**ACTUALIZACIÓN (P12 — RESUELTO con features de Fourier):** la variante del PINN inverso con
+**features de Fourier** en la entrada (`p12_pinn_fourier.jl`) rompe el spectral bias y
+**recupera el lag de forma limpia**: sintético lag verdadero 4 trim → **4.36 (error 8.9%)**,
+y datos reales (QoQ) → **3.90 trim = 0.98 años**, R²=1.00, k̂=0.42. Esto es el resultado
+afirmativo: la **calibración diferenciable (PINN inverso) recupera el lag de maduración ~1 año**,
+validado en sintético, coincidiendo con los métodos no-PINN. Las otras variantes NO sirvieron:
+per-crisis (`p12_pinn_percrisis.jl`) ajusta bien (R²=0.86) pero el lag colapsa a 0.84 trim
+(sintético 59% error); convolución simple (P11) colapsa por spectral bias. ⇒ **El PINN con
+Fourier features es la calibración diferenciable que entrega el lag.** (Resultados en
+`results/p12_pinn_fourier_estimates.csv`.)
+
 ## 6. Próximos pasos (priorizados)
 
 1. **Cerrar P11 (PINN inversa, formulación de convolución):** corregir el **sesgo del lag**
