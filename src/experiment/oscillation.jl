@@ -5,7 +5,7 @@
 # ciclos limpios, pre-2008) — el ajuste full-series degeneraba a casi-punto-fijo. Exporta
 # la trayectoria ajustada y los datos para que Python grafique (trayectoria + fase).
 #
-# Corre:  julia --project=third_parties/DM2026-Curso/code/08_LV_inverse_PINN \
+# Corre:  julia --project=<entorno Julia con DifferentialEquations, Lux, Zygote, Optim> \
 #               src/experiment/oscillation.jl
 # ============================================================
 include(joinpath(@__DIR__, "models.jl"))   # FN, LV, osolve, fit_solver, load_yoy, CSVP, OUTDIR

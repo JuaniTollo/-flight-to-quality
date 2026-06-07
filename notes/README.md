@@ -1,7 +1,6 @@
 # Optimización con restricciones y dualidad lagrangiana
 
 > Notas sobre la formulación con restricciones del ajuste de EDOs (base para PINNs).
-> Basado en `third_parties/DM2026-Curso/clases/clase8.md` (No8 - PINNs).
 
 El punto central es que **un mismo problema se puede escribir de dos formas
 equivalentes: sin restricciones o con restricciones**, y a veces conviene una u otra.

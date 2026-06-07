@@ -8,7 +8,7 @@
 # Exporta output/experiment/julia_forecasts.csv (crisis,model,method,h,target_date,
 # series,y_true,y_pred) para que Python lo compare ALINEADO con RW/VAR.
 #
-# Corre:  julia --project=third_parties/DM2026-Curso/code/08_LV_inverse_PINN \
+# Corre:  julia --project=<entorno Julia con DifferentialEquations, Lux, Zygote, Optim> \
 #               src/experiment/models.jl
 # ============================================================
 using DifferentialEquations, Optim, Lux, Optimisers, Zygote, Random, Statistics
