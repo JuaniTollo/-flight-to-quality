@@ -27,3 +27,6 @@ DM2026-Curso/
 bibliography/
 .claude/settings.local.json
 contexto_repo_limpio.txt
+
+# Session locks
+.claude/*.lock

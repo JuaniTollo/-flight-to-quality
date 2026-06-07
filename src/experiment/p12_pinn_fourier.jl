@@ -202,4 +202,4 @@ function main(; n_epochs=8000)
 end
 
 # Run completo: main()  (8000 épocas). Para smoke test pasar n_epochs chico, p.ej. main(n_epochs=500).
-main(n_epochs=500)
+main()
