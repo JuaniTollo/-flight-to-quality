@@ -194,8 +194,14 @@ def fit_given_kernel(windows, mu, s, L):
     return float(resid @ resid)
 
 
-def estimate_mu_s(windows, L, n_mu=41, n_s=25, s_cap=4.0):
-    """Estima (μ, s) por grilla (mínima SSE). Devuelve (μ̂, ŝ, μ_eff, sd_eff)."""
+def estimate_mu_s(windows, L, n_mu=71, n_s=33, s_cap=4.0):
+    """Estima (μ, s) por grilla (mínima SSE). Devuelve (μ̂, ŝ, μ_eff, sd_eff).
+
+    La resolución de la grilla acota el sesgo de discretización del estimador: con n_mu=71
+    el paso en μ es ~0.1 trim, muy por debajo de las diferencias que mide la frontera, de
+    modo que la cobertura del IC no se contamina con sesgo de grilla (importa cuando la
+    varianza muestral se achica, p.ej. n_ep=100). El bootstrap usa la MISMA grilla para que
+    el punto-estimado caiga dentro de su propia distribución bootstrap."""
     mus = np.linspace(1.0, float(LMAX), n_mu)
     ss = np.concatenate([[1e-3], np.linspace(0.2, s_cap, n_s)])
     best_mu, best_s, best_sse = mus[0], ss[0], np.inf
@@ -210,9 +216,10 @@ def estimate_mu_s(windows, L, n_mu=41, n_s=25, s_cap=4.0):
 
 
 # --------------------------------------------------------------------------- bootstrap CI
-def bootstrap_ci(windows, L, rng: np.random.Generator, B=120, n_mu=21, n_s=13):
+def bootstrap_ci(windows, L, rng: np.random.Generator, B=120, n_mu=71, n_s=33):
     """IC95 de (μ_eff, sd_eff) por bootstrap de episodios (resample con reemplazo).
-    Grilla más gruesa para velocidad. Devuelve (mu_lo,mu_hi, sd_lo,sd_hi)."""
+    Usa la MISMA grilla que el punto-estimado para no inyectar sesgo de discretización en
+    la cobertura. Devuelve (mu_lo,mu_hi, sd_lo,sd_hi)."""
     nC = len(windows)
     mus_b, sds_b = [], []
     for _ in range(B):
@@ -226,7 +233,7 @@ def bootstrap_ci(windows, L, rng: np.random.Generator, B=120, n_mu=21, n_s=13):
 
 
 # --------------------------------------------------------------------------- una celda
-def run_cell(n_ep, L, snr, n_rep, base_seed, B=120, grid=(41, 25), boot_grid=(21, 13),
+def run_cell(n_ep, L, snr, n_rep, base_seed, B=120, grid=(71, 33), boot_grid=(71, 33),
              verbose=False):
     """Una celda del barrido: n_rep réplicas. Mide error y cobertura de centro y ancho.
     Determinista: la semilla de cada réplica deriva de (base_seed, n_ep, L, snr, rep)."""
@@ -331,19 +338,24 @@ def main():
               f"cov_centro={res['mu_cov']:.2f} | sd_bias={res['sd_bias']:+.2f} "
               f"sd_rmse={res['sd_rmse']:.2f} cov_ancho={res['sd_cov']:.2f}")
         print(f"  tiempo celda smoke: {dt:.1f}s")
-        # estimación de costo del full
+        # estimación de costo del full (el coste crece con L y n_ep; esto es orden de magnitud)
         cells = 4 * 3 * 3
-        per_cell_full = dt / 2 * (40 / 2) * (200 / 20)   # n_rep y B del full vs smoke
-        print(f"  estimación full (≈{cells} celdas × {40} réplicas × B=200): "
-              f"~{cells * per_cell_full / 60:.0f} min (orden de magnitud)")
+        fits_smoke = 2 * (1 + 20)          # n_rep × (1 estimate + B bootstrap), grilla chica
+        fits_full = 40 * (1 + 120)         # n_rep × (1 + B) del full, grilla 71×33
+        scale_grid = (71 * 33) / (21 * 13)  # grilla full vs smoke
+        scale_L = 6                         # celdas grandes (L=52, n_ep=100) dominan
+        per_cell_full = dt / fits_smoke * fits_full * scale_grid
+        print(f"  estimación full (≈{cells} celdas × {40} réplicas × B=120, grilla 71×33): "
+              f"~{cells * per_cell_full * scale_L / 2 / 60:.0f}–{cells * per_cell_full * scale_L / 60:.0f} min "
+              f"(las celdas L=52/n_ep=100 dominan)")
         return
 
     # ----------------------------------------------------------------- BARRIDO COMPLETO
     n_eps = [9, 20, 50, 100]
     Ls = [13, 26, 52]
     snrs = [0.03, 0.1, 0.3]
-    n_rep = 40
-    B = 200
+    n_rep = 12               # réplicas por celda (reducido de 40 para viabilidad; frontera visible)
+    B = 60                   # réplicas bootstrap por IC (reducido de 120; IC95 algo más ruidoso)
     base_seed = 20260607
 
     rows = []
