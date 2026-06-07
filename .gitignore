@@ -30,3 +30,8 @@ contexto_repo_limpio.txt
 
 # Session locks
 .claude/*.lock
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.log
+paper/*.out

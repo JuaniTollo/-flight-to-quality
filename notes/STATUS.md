@@ -138,3 +138,27 @@ julia --project=julia src/experiment/p11_pinn_maturation.jl  # PINN inversa (P11
 
 `data/` está versionado (snapshot FRED), así que los números reproducen sin re-descargar.
 Las figuras van a `output/experiment/` (gitignored, regenerable).
+
+## 8. PENDIENTE al cierre de sesión (2026-06-07)
+
+**Cerrado y en el repo** (cuerpo del paper + apéndices A/B): CCF (P7), event study (P8),
+régimen de crisis + ablation + placebos (P9), bench del kernel distribuido (P10), modelo
+físico + identificabilidad (P11), las 4 variantes de PINN inverso (**Fourier = la que recupera
+el lag, 8.9% sintético / 0.98 años real**), VAR-Lyapunov, transform-robustness, lag-stability/LOO,
+hier-Bayes, bifurcación (P13). Paper: `paper/main.{tex,pdf,docx}` (6 pág).
+
+**Tres corridas quedaron sin terminar** (la sesión se cerró; los procesos mueren con ella):
+- **`p12_pooled_placebo.py`** — llegó a 12/25 conjuntos; ratios placebo ≈ ratio de crisis
+  (1.36–1.71 vs 1.37) → **apunta a TRIVIAL** (la dinámica de crisis compartida NO es especial),
+  consistente con el kernel-placebo. Terminar: `uv run python -m src.experiment.p12_pooled_placebo --n-sets 25` (lento, ~horas).
+- **`p12_ident_frontier.py`** — corrió ~7h pero stdout quedó buffereado y no escribió salida
+  bajo contención; tratar como NO completado. Correr con output sin buffer y, si hace falta,
+  grilla más chica: `PYTHONUNBUFFERED=1 uv run python -m src.experiment.p12_ident_frontier`
+  (ya reducido a n_rep=12, B=60; aún ~horas). Es el experimento que convertiría el muro de
+  identificabilidad en resultado positivo (la frontera episodios × longitud × SNR).
+- **`p12_pinn_profile.jl`** — abortado (daba k divergente, no productivo; el Fourier ya da el
+  lag). Opcional reintentar.
+
+**Siguiente salto (breakthrough, necesita datos nuevos — ver §6):** panel multi-país (identificar
+el ANCHO de la distribución del delay) y gestación micro → kernel macro (predicción que un VAR no
+puede hacer). No se logra reformulando esta serie (Camino A/bifurcación ya probado, negativo).
