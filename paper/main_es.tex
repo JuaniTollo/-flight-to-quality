@@ -18,8 +18,8 @@
 \graphicspath{{figures/}}
 \captionsetup{font=small}
 
-\title{\vspace{-1.2cm}Un retardo distribuido de acumulación en el ciclo ganancias--inversión:\\
-calibración inversa diferenciable y límites de identificabilidad}
+\title{\vspace{-1.2cm}Un retardo distribuido de acumulación en el ciclo\\
+ganancias--inversión: límites de identificabilidad}
 \author{Juan I. Tollo}
 \date{\today}
 
@@ -36,10 +36,9 @@ junto con un feedback negativo centrado en $\sim$1 año, que se acumula antes de
 Los osciladores depredador--presa de fase fija
 (Lotka--Volterra, FitzHugh--Nagumo) no pueden reproducir esa forma. Proponemos en cambio un
 modelo físico de \emph{cadena de acumulación} ---una ecuación diferencial con retardo
-distribuido--- y lo calibramos resolviendo un problema inverso diferenciable (una red neuronal
-informada por la física, PINN, con \emph{features} de Fourier). El método recupera el retardo
-limpiamente en datos sintéticos (error del $8{,}9\%$) y estima $\approx$1 año en los datos
-reales; la estimación es estable a la transformación de la serie y a excluir cada crisis. El
+distribuido--- y estimamos su retardo con métodos clásicos convergentes (núcleo empírico,
+rezagos distribuidos, $\mathrm{VAR}$, agrupamiento jerárquico): el retardo de $\approx$1 año es
+estable a la transformación de la serie y a excluir cada crisis. El
 resultado central es de \emph{identificabilidad}: el \emph{centro} del retardo se identifica de
 forma robusta, pero su \emph{dispersión} no, y el feedback es observacionalmente equivalente a
 un modelo lineal $\mathrm{VAR}(p\!\ge\!4)$ al nivel de la autocovarianza de segundo orden.
@@ -70,8 +69,8 @@ osciladores), o uno \emph{retardado}, cuyo tiempo característico refleja la
 co-movimiento contemporáneo más un feedback negativo concentrado alrededor de un año: una
 forma que ningún oscilador de fase fija puede generar, pero que un sistema con retardo
 distribuido sí. La contribución es descriptiva y metodológica: una estimación del retardo de
-acumulación robusta y estable, recuperada por un método inverso diferenciable donde la
-calibración clásica falla, junto con una caracterización explícita de \emph{lo que no puede
+acumulación robusta y estable, convergente entre varios métodos clásicos, junto con una
+caracterización explícita de \emph{lo que no puede
 identificarse} con estos datos.
 
 \section{Datos y métodos}
@@ -104,19 +103,11 @@ ponderado de la inversión pasada, con pesos $w(\mu)$ dados por el núcleo Gamma
 sobreacumulación: la inversión que se acumuló hace $\sim\mu$ trimestres deprime las ganancias
 de hoy con intensidad $k$.
 
-\paragraph{El problema inverso y su solución diferenciable.} Estimar $(a,b,c,d,k,\mu)$ a
-partir de las series es un \emph{problema inverso}: conocemos la salida (los datos) y buscamos
-los parámetros de la ecuación que la generó. Lo resolvemos con una \emph{red neuronal
-informada por la física} (PINN; Raissi et al., 2019): una red $t\mapsto[P,I]$ que aproxima
-las trayectorias, entrenada con dos términos de pérdida ---uno de ajuste a los datos y otro
-que penaliza violar la ecuación diferencial--- optimizando \emph{a la vez} los pesos de la red
-y los parámetros físicos ($\mathcal L=\mathcal L_{\text{datos}}+\mathcal L_{\text{física}}$).
-Sobre ventanas largas, una red estándar sufre \emph{sesgo espectral} (aprende solo las bajas
-frecuencias y el retardo queda sin anclar); lo corregimos con \emph{features de Fourier}
----senos y cosenos de varias frecuencias en lugar del tiempo crudo---, que le permiten
-representar las oscilaciones de la serie. Validamos primero en datos \emph{sintéticos}
-(generados por el modelo con un retardo conocido): si no recupera un retardo que sabemos
-verdadero, no es creíble en datos reales.
+\paragraph{Estimación del retardo.} Estimamos el retardo $\mu$ del núcleo con cuatro métodos
+clásicos: el núcleo empírico de la regresión de las ganancias sobre rezagos de la inversión,
+una regresión de rezagos distribuidos, la CCF implícita de un $\mathrm{VAR}(p)$ ajustado, y un
+agrupamiento jerárquico que combina las crisis para estimar un retardo poblacional. La evidencia
+del retardo es la \emph{convergencia} de los cuatro, no un único método.
 
 \paragraph{Controles de identificabilidad.} \emph{Identificable} significa que los datos
 bastan para fijar un parámetro; si distintos valores ajustan igual de bien, no lo está. Lo
@@ -136,9 +127,10 @@ La CCF \emph{oscila} en lugar de decaer: un pico contemporáneo dominante
 estudio de evento sobre las doce recesiones NBER (alineadas en el valle de la inversión)
 confirma el patrón: las ganancias giran primero y la brecha inversión--ganancias se acumula
 $\sim$1--1,5 años antes del valle ---el \emph{buildup} de sobreacumulación que precede a las
-recesiones. El desfase efectivo es cercano al co-movimiento ($\sim$10$^\circ$), no los
-$90^\circ$ de LV/FN; los osciladores de fase fija quedan refutados: su CCF es un coseno
-rígido, no un pulso contemporáneo más un valle negativo retardado.
+recesiones. El máximo de la CCF está en el rezago~0, no a un cuarto de ciclo de atraso como
+exige una oscilación de fase fija (LV, FN; los $90^\circ$ de la introducción): por eso esos
+osciladores quedan descartados ---su CCF es un coseno que no puede combinar un pico
+contemporáneo con un valle negativo retardado.
 
 \begin{figure}[t]
 \centering
@@ -156,17 +148,8 @@ estimadores clásicos en $\approx$4 trimestres: el núcleo empírico, la regresi
 distribuidos, un $\mathrm{VAR}(p\!\ge\!4)$ y una estimación jerárquica agrupada
 ($\mu\approx4{,}7$--$4{,}9$). Esa estimación es estable entre transformaciones de diferencia
 (log trimestre a trimestre) y al \emph{leave-one-crisis-out} (rango de $0{,}62$ trimestres), de modo
-que no depende de ningún episodio. El inverso diferenciable (PINN) aporta una calibración
-\emph{física} del mismo retardo: validado en datos sintéticos recupera un retardo conocido
-con $8{,}9\%$ de error ($4{,}0\to4{,}36$ trimestres). En datos reales estima $3{,}90$
-trimestres $=0{,}98$ años, coincidente con los métodos clásicos; pero advertimos que su ajuste
-casi perfecto a la serie ($R^2\approx1$) refleja la \emph{interpolación de la red sustituta}
-($\approx$2160 pesos para $\approx$290 valores objetivo), no una validación del modelo de
-acumulación (App.~\ref{app:pinn}). El PINN debe leerse, por tanto, como una demostración de
-calibración diferenciable \emph{corroborada} por los métodos clásicos, no como la fuente del
-retardo. Las otras variantes del inverso (single-shooting, estados latentes libres) colapsan el
-retardo o lo sesgan $\sim$55\%; solo la formulación bien puesta ---convolución con el núcleo
-Gamma más features de Fourier--- funciona (Apéndice~\ref{app:pinn}).
+que no depende de ningún episodio. El agrupamiento jerárquico da un retardo poblacional
+$\mu_{\text{pob}}\approx4{,}9$ trimestres $[4{,}4;5{,}5]$, con la \emph{dispersión no resuelta}.
 
 \paragraph{Lo que no puede identificarse.}
 El feedback explica solo $\sim$3\% de la varianza del crecimiento de las ganancias (contra
@@ -182,13 +165,11 @@ es \emph{estructural y permanente}, no una firma del giro del ciclo.
 $\mathrm{VAR}(p\!\ge\!4)$ ajustado reproduce el valle negativo desde sus coeficientes
 solamente (Fig.~\ref{fig:var}). El modelo de acumulación es una \emph{reparametrización
 interpretable} de ese contenido lineal, no un mecanismo separable de él con estos datos.
-\item \textbf{El $k$ del PINN no es una atribución directa:} una descomposición OLS del
-término de sobreacumulación $-k\,m$ sobre los datos reales da $\beta_m\approx+0{,}02$
-($t\approx0{,}15$, no significativa; signo \emph{contrario} al esperado) con $\Delta R^2\approx0$,
-porque la inversión acumulada $m$ es colineal con la
-inversión contemporánea $I$. El $k\approx0{,}42$ que reporta el PINN proviene de su red
-sustituta sobre-flexible ajustando una penalización casi plana, no de un canal de acumulación
-separable del co-movimiento contemporáneo.
+\item \textbf{El término de sobreacumulación no se identifica por separado:} una descomposición
+OLS de $-k\,m$ sobre los datos reales da $\beta_m\approx+0{,}02$ ($t\approx0{,}15$, no
+significativa; signo \emph{contrario} al esperado) con $\Delta R^2\approx0$, porque la inversión
+acumulada $m$ es colineal con la inversión contemporánea $I$. No podemos atribuir a la
+acumulación un canal causal separable del co-movimiento contemporáneo.
 \end{itemize}
 
 \begin{figure}[t]
@@ -205,22 +186,30 @@ coeficientes: equivalencia observacional con el núcleo de retardo distribuido.}
 El cuadro sustantivo es consistente y honesto. \emph{Existe} un feedback de sobreacumulación
 con un retardo de acumulación de alrededor de un año ---estructural antes que específico de las
 crisis, ya que el placebo encuentra el valle negativo con igual frecuencia fuera de ellas--- y
-lo recuperamos con un modelo físico diferenciable donde la
-inversión clásica falla. Dos límites acotan la afirmación. Primero, el contenido económico ---un feedback de sobreacumulación con las ganancias cediendo
+lo estimamos como un núcleo de retardo distribuido convergente entre varios métodos clásicos.
+Dos límites acotan la afirmación. Primero, el contenido económico ---un feedback de sobreacumulación con las ganancias cediendo
 antes de las recesiones--- pertenece a la tradición previa (Astarita, 2012; Tapia, 2023);
-nuestro aporte es el modelo y el método inverso, no el fenómeno. Segundo, con nueve
+nuestro aporte es el modelo y el análisis de identificabilidad, no el fenómeno. Segundo, con nueve
 crisis de posguerra utilizables y una señal del $\sim$3\% de la varianza, los datos no pueden
 separar un retardo genuinamente distribuido de uno puntual, ni el mecanismo de acumulación de
 un VAR lineal de memoria larga.
 
 \textbf{Conclusión.} El feedback de sobreacumulación ganancias--inversión queda bien descripto
-por un retardo distribuido de acumulación centrado en $\sim$1 año, recuperado por un inverso
-diferenciable que supera el sesgo espectral y el mal condicionamiento de la calibración
-clásica. El resultado robusto y transferible es la \emph{ubicación de la frontera de
+por un retardo distribuido de acumulación centrado en $\sim$1 año, convergente entre varios
+métodos clásicos. El resultado robusto y transferible es la \emph{ubicación de la frontera de
 identificabilidad}: el centro del retardo es recuperable y estable; su dispersión, y su
 separación de un modelo lineal, no lo son ---una frontera fijada por la fuerza de la señal y
 el número de episodios, no por el ajuste fino. Cruzarla requiere datos nuevos, no una
 reparametrización.
+
+\textbf{Trabajo futuro.} Una extensión natural es calibrar el núcleo físico con un inverso
+diferenciable ---una red neuronal informada por la física (PINN; Raissi et al., 2019) con
+\emph{features} de Fourier para sortear el sesgo espectral. En datos sintéticos, con un retardo
+conocido, el método lo recupera; pero una calibración limpia sobre la serie real exige pesar la
+pérdida física con suficiente fuerza para que la red no interpole los datos e ignore la ODE
+---algo que con la ponderación que probamos no se logró. Esa calibración bien condicionada, y un
+panel multi-país que aporte más episodios para resolver la dispersión del retardo, son los pasos
+siguientes.
 
 \section*{Agradecimientos}
 El autor utilizó Claude (Anthropic) como asistente para redacción, figuras y código de los
@@ -231,43 +220,11 @@ que asume la responsabilidad por el contenido.
 Los datos son series públicas de FRED: ganancias corporativas (\texttt{A053RC1Q027SBEA}),
 inversión privada bruta (\texttt{GPDI}) y recesiones del NBER (\texttt{USREC}), con un snapshot
 versionado para reproducir sin re-descargar. El código (Python~3.12 para el análisis empírico;
-Julia con \texttt{Lux.jl}, \texttt{DifferentialEquations.jl} y \texttt{Zygote.jl} para los PINN)
-está en \url{https://github.com/JuaniTollo/-flight-to-quality}, con entornos fijados
+Julia con \texttt{Lux.jl}, \texttt{DifferentialEquations.jl} y \texttt{Zygote.jl} para el inverso
+diferenciable de trabajo futuro) está en \url{https://github.com/JuaniTollo/-flight-to-quality},
+con entornos fijados
 (\texttt{uv.lock}, \texttt{Manifest.toml}). Series FRED de dominio público; librerías de código
 abierto (MIT/BSD).
-
-\appendix
-
-\section{Variantes del PINN inverso}
-\label{app:pinn}
-El retardo solo es recuperable cuando la red sustituta puede representar la serie y los
-parámetros están bien puestos. La Tabla~\ref{tab:pinn} compara cuatro variantes sobre datos
-sintéticos (retardo verdadero: 4 trimestres) y sobre la ventana real. Una red estándar sobre
-la ventana larga sufre sesgo espectral y el retardo colapsa; el agrupamiento por crisis
-arregla el ajuste ($\bar R^2=0{,}86$) pero no el retardo; solo las features de Fourier
-recuperan el retardo limpiamente ($8{,}9\%$ de error sintético, $0{,}98$ años en datos
-reales). \textbf{Una advertencia sobre el $R^2$ en datos reales.} El $R^2\approx1$ de la fila
-real \emph{no} indica que el modelo ajuste: la red sustituta tiene $\approx$2160 pesos para
-$\approx$290 valores objetivo y una base de Fourier hasta la frecuencia de Nyquist, de modo que
-interpola cualquier serie; el $R^2$ mide esa interpolación, no que la ODE se cumpla. La métrica
-honesta es el \emph{residuo físico}, no el $R^2$; por eso el retardo se respalda en la
-recuperación sintética y en los métodos no-PINN.
-
-\begin{table}[h]\centering\small
-\begin{tabular}{@{}llll@{}}
-\toprule
-Variante & Sintético (verdadero $4$t) & Retardo real & Veredicto \\
-\midrule
-Single-shooting / convolución & $1{,}86$t ($54\%$ err) & colapsa a $0{,}23$t, no físico & falla \\
-Agrupado por crisis & $1{,}64$t ($59\%$ err) & $0{,}84$t ($\bar R^2\!=\!0{,}86$) & ajusta, retardo colapsa \\
-Perfil de verosimilitud en $\mu$ & --- & no concluyente & inestable \\
-\textbf{Features de Fourier} & $\mathbf{4{,}36}$\textbf{t} $\mathbf{(8{,}9\%)}$ & $\mathbf{3{,}90}$\textbf{t}$=\mathbf{0{,}98}$\textbf{años} ($R^2_{\text{red}}\!=\!1$, interpola) & \textbf{recupera} \\
-\bottomrule
-\end{tabular}
-\caption{Variantes del PINN inverso. Solo las features de Fourier ajustan la serie y a la vez
-recuperan el retardo; las demás fallan por sesgo espectral o por el trade-off $k$--$\mu$.}
-\label{tab:pinn}
-\end{table}
 
 \begin{thebibliography}{9}\small
 \bibitem{astarita} Astarita, R. (2012). Crisis, sobrecapacidad y coyuntura. \emph{rolandoastarita.blog}, 22 de marzo de 2012. \url{https://rolandoastarita.blog/2012/03/22/crisis-sobrecapacidad-y-coyuntura/}
