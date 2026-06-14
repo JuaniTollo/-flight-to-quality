@@ -41,8 +41,8 @@ H = 8                            # semiancho de ventana (trim)
 
 def qoq_data():
     raw = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
-    P = raw["PROFITS"].pct_change(1) * 100
-    I = raw["INVESTMENT"].pct_change(1) * 100
+    P = np.log(raw["PROFITS"]).diff() * 100
+    I = np.log(raw["INVESTMENT"]).diff() * 100
     d = pd.DataFrame({"P": P, "I": I}).dropna()
     return d.index, d["P"].to_numpy(), d["I"].to_numpy()
 
@@ -123,7 +123,7 @@ def main():
     fig, ax = plt.subplots(1, 3, figsize=(15, 4.3))
     ax[0].plot(mus, r2_mu, "o-"); ax[0].axvline(mu_best, color="r", ls="--", lw=0.8)
     ax[0].set_title(f"Media del lag SÍ se identifica\n(óptimo μ≈{mu_best}q ≈ 1 año)")
-    ax[0].set_xlabel("μ = lag medio de maduración (trim)"); ax[0].set_ylabel("R²")
+    ax[0].set_xlabel("μ = lag medio de acumulación (trim)"); ax[0].set_ylabel("R²")
 
     ax[1].plot([1/np.sqrt(s) for s in shapes], r2_sh, "o-")
     ax[1].set_title(f"Ancho NO se identifica\n(R² plano, rango={span:.3f})")
@@ -135,7 +135,7 @@ def main():
         ax[2].plot(np.arange(len(w)), w, "o-", label=lbl, ms=4)
     ax[2].set_title("Dos kernels que ajustan IGUAL\n(indistinguibles con esta data)")
     ax[2].set_xlabel("lag k (trim)"); ax[2].set_ylabel("peso del kernel"); ax[2].legend(fontsize=8)
-    fig.suptitle("Pieza 11 — Modelo físico de maduración: el centro del lag es identificable, el ancho no", fontsize=12)
+    fig.suptitle("Modelo físico de acumulación: el centro del lag se identifica, el ancho no", fontsize=12)
     fig.tight_layout(); fig.savefig(C.OUTDIR / "p11_physical_delay.png", dpi=130); plt.close(fig)
     print(f"✓ figura: {C.OUTDIR}/p11_physical_delay.png")
     print("\nVEREDICTO: modelo físico (cadena de maduración) válido y diferenciable; el lag de "

@@ -20,6 +20,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from src.experiment import common as C
 
@@ -35,10 +36,12 @@ def ccf(p, i, kmax=KMAX):
 
 
 def main():
-    df = C.load()
-    p, i = df["PROFITS_YOY"].to_numpy(), df["INVEST_YOY"].to_numpy()
+    raw = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
+    g = pd.DataFrame({"P": np.log(raw["PROFITS"]).diff() * 100,
+                      "I": np.log(raw["INVESTMENT"]).diff() * 100}).dropna()
+    p, i = g["P"].to_numpy(), g["I"].to_numpy()
     endo = np.array([not ((dt.date(2007, 1, 1) <= d.date() <= dt.date(2010, 12, 31)) or
-                          (dt.date(2019, 1, 1) <= d.date() <= dt.date(2021, 12, 31))) for d in df.index])
+                          (dt.date(2019, 1, 1) <= d.date() <= dt.date(2021, 12, 31))) for d in g.index])
     ks, c_all = ccf(p, i)
     _, c_endo = ccf(p[endo], i[endo])
 
