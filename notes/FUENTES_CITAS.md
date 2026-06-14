@@ -181,3 +181,18 @@ No se les atribuye ninguna afirmación sobre ganancias/inversión.
 3. Quitada por completo **Tapia Granados (2012)** — dirección causal del abstract distinta
    de nuestra tesis y sin acceso al texto.
 4. Este archivo (`FUENTES_CITAS.md`) documenta la procedencia y el estado de cada cita.
+
+## Poda de bibliografía (reducción a 5 páginas, 2026-06-14)
+
+Para dejar solo lo discutido y citado en el texto, la bibliografía final del paper quedó en
+**4 entradas**, todas efectivamente citadas:
+
+- **Tapia (2023)** y **Astarita (2012)** — el núcleo discutido y verificado.
+- **Goldstein (1999)** — el modelo predador-presa de fase fija que el paper refuta (blanco de
+  los 90°), citado en la intro.
+- **Raissi et al. (2019)** — el paper origen del método PINN que se usa, citado en métodos.
+
+**Retiradas de la bibliografía** (no se discutían y/o no se citaban en el cuerpo): Goodwin
+(1967) (LV es de manual; se nombra sin atribución), Kalecki (1935) y Kydland–Prescott (1982)
+(caían con el párrafo de microfundación), y Almon (1965), Rackauckas et al. (2020) y
+Ramsay–Hooker (2017) (entradas huérfanas, nunca citadas en el texto).
