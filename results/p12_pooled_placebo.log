@@ -1,0 +1,12 @@
+serie: 313 trim | ventana = 13 trim (±6)
+ventanas de crisis (K) = 11 -> ['1954', '1958', '1961', '1970', '1975', '1980', '1982', '1991', '2001', '2008', '2020']
+centros no-crisis disponibles (sep=2HW) = 69
+conjuntos placebo a evaluar = 150 (K=11 ventanas c/u, RNG seed=20260606)
+budget pooled por ajuste = 75s
+
+======================================================================
+  MODELO LV
+======================================================================
+  ratio REAL crisis = 1.376  (SSE_indep=130.0, SSE_pooled=178.8)  [ref p9: 1.37]  [328s]
+    placebo   1/150: ratio= 1.544  [411s]
+    placebo   2/150: ratio= 1.416  [352s]
