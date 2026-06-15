@@ -32,13 +32,13 @@ ganancias--inversión: límites de identificabilidad}
 Estudiamos el ciclo ganancias--inversión de la economía de EE.UU.\ (datos trimestrales,
 1948--2026) desde la hipótesis de \emph{sobreacumulación}: la inversión pasada deprime la
 rentabilidad presente con un retardo. Documentamos un co-movimiento contemporáneo dominante
-junto con un feedback negativo centrado en $\sim$1 año, que se acumula antes de las recesiones.
+junto con un feedback negativo centrado en $\sim$1 año.
 Los osciladores depredador--presa de fase fija
 (Lotka--Volterra, FitzHugh--Nagumo) no pueden reproducir esa forma. Proponemos en cambio un
 modelo físico de \emph{cadena de acumulación} ---una ecuación diferencial con retardo
 distribuido--- y estimamos su retardo con métodos clásicos convergentes (núcleo empírico,
 rezagos distribuidos, $\mathrm{VAR}$, agrupamiento jerárquico): el retardo de $\approx$1 año es
-estable a la transformación de la serie y a excluir cada crisis. El
+estable a la transformación de la serie y a excluir las crisis extremas (2008/2020). El
 resultado central es de \emph{identificabilidad}: el \emph{centro} del retardo se identifica de
 forma robusta, pero su \emph{dispersión} no, y el feedback es observacionalmente equivalente a
 un modelo lineal $\mathrm{VAR}(p\!\ge\!4)$ al nivel de la autocovarianza de segundo orden.
@@ -88,8 +88,8 @@ la magnitud aparente del feedback en un factor $\sim$2, por ser una diferencia a
 \caption{El ciclo, a la vista. Crecimiento de las ganancias y de la inversión en EE.UU.\
 (suavizado a un año, en desvíos estándar); las franjas grises son las recesiones del NBER.
 Ambas series suben juntas en los auges y se desploman en cada recesión (correlación
-contemporánea $\approx+0{,}7$); el patrón de sobreacumulación es que la inversión sigue alta
-cuando la ganancia ya gira a la baja, antes del valle.}
+contemporánea $\approx+0{,}7$); la lectura de sobreacumulación es que la inversión tiende a
+sostenerse cuando la ganancia ya gira a la baja antes de las recesiones.}
 \label{fig:series}
 \end{figure}
 
@@ -135,10 +135,11 @@ vía la ecuación de Lyapunov, para ver si un modelo lineal sin mecanismo ya rep
 La CCF \emph{oscila} en lugar de decaer: un pico contemporáneo dominante
 ($\rho(0)\approx+0{,}5$) y un valle negativo (el mínimo de la CCF) en el rezago~4
 ($\approx-0{,}2$), que vuelve a cero hacia el rezago 6 (Fig.~\ref{fig:ccf}). Un
-estudio de evento sobre las doce recesiones NBER (alineadas en el valle de la inversión)
-confirma el patrón: las ganancias giran primero y la brecha inversión--ganancias se acumula
-$\sim$1--1,5 años antes del valle ---el \emph{buildup} de sobreacumulación que precede a las
-recesiones. El máximo de la CCF está en el rezago~0, no a un cuarto de ciclo de atraso como
+estudio de evento sobre las recesiones NBER (alineadas en el valle de la inversión) es
+consistente con el patrón cualitativo ---las ganancias tienden a girar a la baja antes que la
+inversión, que sigue corriendo por delante en el tramo previo al valle (el \emph{buildup} de
+sobreacumulación)---, aunque el adelanto exacto es sensible al anclaje del evento, otra señal de
+la debilidad de la señal. El máximo de la CCF está en el rezago~0, no a un cuarto de ciclo de atraso como
 exige una oscilación de fase fija (LV, FN; los $90^\circ$ de la introducción): por eso esos
 osciladores quedan descartados ---su CCF es un coseno que no puede combinar un pico
 contemporáneo con un valle negativo retardado.

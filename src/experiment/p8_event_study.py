@@ -249,7 +249,9 @@ def gap_bootstrap(df, p, i, anchors, B=2000):
 
 
 def main():
-    df = C.load()
+    raw = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
+    df = pd.DataFrame({"PROFITS_YOY": np.log(raw["PROFITS"]).diff() * 100,
+                       "INVEST_YOY": np.log(raw["INVESTMENT"]).diff() * 100}).dropna()
     p, i = df["PROFITS_YOY"].to_numpy(), df["INVEST_YOY"].to_numpy()
     anchors = crisis_anchors(df, p, i)
     composite(df, p, i, anchors)
