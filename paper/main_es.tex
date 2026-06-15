@@ -141,6 +141,34 @@ $\sim$1 año antes deprime las ganancias actuales). Robusto a excluir 2008/2020.
 \label{fig:ccf}
 \end{figure}
 
+\paragraph{Los osciladores de fase fija fallan cuantitativamente.}
+La incompatibilidad estructural se confirma con un ajuste directo. Calibramos cada modelo por
+\emph{gradient matching} ---ajustar el campo vectorial $f(P,I)$ a la velocidad observada
+$(\dot P,\dot I)$, el método con que esta literatura testea los osciladores tipo Goodwin--- sobre
+el \emph{mismo} objetivo y en log-trim, y medimos el $R^2$ del campo (Tabla~\ref{tab:models}).
+Los predador--presa de fase fija no describen la dinámica: FN da un $R^2$ fuertemente negativo y
+LV apenas $+0{,}04$. El modelo de acumulación propuesto es el mejor de los candidatos: su término
+$-k\,m$ ---con $k\approx-0{,}42$, el signo económicamente esperado--- mejora sobre el lineal puro
+con $\Delta\mathrm{AIC}\approx-3$. Los $R^2$ absolutos son bajos (la dinámica tiene $\sim$3\% de
+señal): es \emph{selección relativa} de modelos, coherente con la frontera de identificabilidad,
+pero descarta los predador--presa de fase fija de forma cuantitativa.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{@{}lcl@{}}
+\toprule
+Modelo & $R^2$ del campo & \\
+\midrule
+FN (predador--presa, no lineal) & $-2{,}6$ & falla \\
+LV (predador--presa, no lineal) & $+0{,}04$ & $\approx$ nulo \\
+Lineal 2D (Markoviano) & $+0{,}05$ & \\
+\textbf{Acumulación (propuesto)} & $\mathbf{+0{,}06}$ & mejor ($\Delta\mathrm{AIC}=-3$) \\
+\bottomrule
+\end{tabular}
+\caption{$R^2$ del campo dinámico por \emph{gradient matching} (log-trim, mismo objetivo para
+todos). Los osciladores de fase fija fallan; el modelo de acumulación, con su término de
+inversión madurada $-k\,m$, ajusta mejor.}
+\label{tab:models}
+\end{table}
 
 \paragraph{El retardo de acumulación se identifica y es estable.}
 La evidencia central del retardo no es un único método sino la \emph{convergencia} de cuatro
