@@ -1,184 +1,142 @@
-% A distributed maturation delay in the profit-investment cycle
-% Self-contained A0 portrait poster (beamerposter). Compile on Overleaf.
-% Reuses the figures already in paper/figures/.
+% Póster A0 vertical (beamerposter). Compilar en Overleaf o con tectonic.
+% Autoexplicativo: cada bloque tiene su conclusión en negrita. Figuras en figures/.
 \documentclass[final]{beamer}
-\usepackage[size=a0,orientation=portrait,scale=1.22]{beamerposter}
+\usepackage[size=a0,orientation=portrait,scale=1.25]{beamerposter}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noshorthands]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{booktabs}
 \graphicspath{{figures/}}
 
-% --- simple, readable colours ---
 \definecolor{accent}{RGB}{18,72,120}
+\definecolor{good}{RGB}{20,110,60}
 \setbeamercolor{block title}{fg=white,bg=accent}
 \setbeamercolor{block body}{fg=black,bg=accent!6}
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}{\small\insertcaption}
 \setbeamerfont{block title}{size=\large,series=\bfseries}
 
-\newlength{\colw}
-\setlength{\colw}{0.46\paperwidth}
+\newlength{\colw}\setlength{\colw}{0.47\paperwidth}
 
 \begin{document}
 \begin{frame}[t]{}
 
-% ===================== HEADER =====================
-\begin{beamercolorbox}[wd=\paperwidth,sep=22pt,center]{block title}
-  {\veryHuge\bfseries A distributed maturation delay in the\\[10pt]
-   profit--investment cycle}\\[18pt]
-  {\Large differentiable inverse calibration and identifiability limits}\\[22pt]
+% ===================== ENCABEZADO =====================
+\begin{beamercolorbox}[wd=\paperwidth,sep=20pt,center]{block title}
+  {\veryHuge\bfseries Un retardo distribuido de acumulación\\[8pt]
+   en el ciclo ganancias--inversión}\\[14pt]
+  {\Large métodos clásicos, un inverso diferenciable y los límites de identificabilidad}\\[16pt]
   {\large\bfseries Juan I. Tollo \quad\textbar\quad
-   Datos, Ecuaciones Diferenciales e Inteligencia Artificial \quad\textbar\quad 2026}
+   Datos, Ecuaciones Diferenciales e Inteligencia Artificial (DM2026) \quad\textbar\quad Exactas--UBA}
 \end{beamercolorbox}
-\vspace{1.2cm}
+\vspace{0.8cm}
 
 \begin{columns}[t]
 
-% ===================== LEFT COLUMN =====================
+% ===================== COLUMNA IZQUIERDA =====================
 \begin{column}{\colw}
 
-\begin{block}{The question}
+\begin{block}{La pregunta}
   \large
-  In the overaccumulation tradition (Marx; Goodwin 1967; Tapia Granados 2023),
-  \textbf{capital accumulation eventually depresses the rate of profit}, generating
-  endogenous business cycles. The classic models (Goodwin's Lotka--Volterra
-  predator--prey) impose an \textbf{instantaneous} antagonism with a fixed
-  $90^\circ$ phase lag.
-  \medskip
-
-  \textbf{We ask:} is the feedback from investment to profits \emph{instantaneous},
-  or a \emph{delayed} one whose timing reflects the \textbf{maturation (gestation) of
-  investment}? \textbf{We find the latter} --- and then map exactly how far the data
-  let us push that claim.
+  En la tradición de \textbf{sobreacumulación} (Tapia 2023; Astarita 2012), la inversión, al
+  \emph{madurar} en capacidad instalada, deprime la ganancia con retardo. El ciclo tiene
+  \textbf{dos direcciones}:
+  \begin{itemize}\large
+    \item ganancias $\to$ inversión: positiva, \textbf{$\sim$1 trimestre} (acelerador, fuerte);
+    \item inversión $\to$ ganancias: negativa, \textbf{$\sim$1 año} (sobreacumulación, débil).
+  \end{itemize}
+  Los modelos clásicos (predador--presa de Goodwin/Lotka--Volterra) imponen un antagonismo
+  \emph{instantáneo}, de fase fija ($90^\circ$). \textbf{Preguntamos:} ¿es instantáneo o
+  \emph{retardado}? \textbf{Encontramos lo segundo} y medimos hasta dónde llegan los datos.
 \end{block}
 
-\begin{block}{Data \& methods}
+\begin{block}{Datos y modelo}
   \large
-  Quarterly U.S. corporate profits and gross private investment
-  (FRED, 1948--2026, $n=313$), in quarter-over-quarter growth $\Delta\log$
-  (the year-over-year transform injects spurious order-4 structure at the lag of
-  interest).
-  \medskip
-
-  \textbf{Descriptive:} cross-correlation function (CCF) + superposed-epoch event
-  study over the 12 NBER recessions.
-  \medskip
-
-  \textbf{Physical model.} Investment matures through $n$ stages before depressing
-  profits; the linear-chain trick gives a Gamma-distributed delay of mean $\mu$
-  (the \emph{maturation lag}):
-  \begin{equation*}
-    \dot P = c\,I - d\,P - k\,m,\qquad
-    \dot I = a\,P - b\,I,\qquad
-    m(t)=\textstyle\sum_j w_j(\mu)\,I(t-j).
-  \end{equation*}
-
-  \textbf{Differentiable inverse.} We calibrate $(a,b,c,d,k,\mu)$ with an inverse
-  physics-informed neural network (PINN): a network $t\mapsto[P,I]$ trained with a
-  data loss plus an ODE-residual loss. On long windows a plain network suffers
-  spectral bias and the lag collapses; \textbf{Fourier-feature inputs remove this}.
+  Ganancias e inversión trimestrales de EE.UU.\ (FRED, 1948--2026), en crecimiento
+  \emph{log trimestre a trimestre} (la transformación interanual inyecta estructura espuria de
+  orden 4 en el rezago de interés). \textbf{Modelo físico:} la inversión atraviesa $n$ etapas de
+  maduración; por el \emph{truco de la cadena lineal}, eso equivale a un \textbf{retardo
+  distribuido con núcleo Gamma} de media $\mu$:
+  \[\dot P = c\,I - d\,P - k\,m,\quad \dot I = a\,P - b\,I,\quad m(t)=\textstyle\sum_j w_j(\mu)\,I(t-j).\]
+  El término $-k\,m$ es la sobreacumulación. Estimamos el retardo con \textbf{métodos clásicos} y
+  con \textbf{dos inversos en Julia/SciML}: uno diferenciable (PINN) y uno bayesiano (Turing).
 \end{block}
 
-\begin{block}{The pattern: a delayed feedback, not an instantaneous antagonism}
-  \large
-  The CCF \textbf{oscillates} rather than decaying: a dominant contemporaneous peak
-  ($\rho(0)\!\approx\!+0.6$) and a negative lobe at lags 4--5 quarters
-  ($\approx\!-0.3$), back to zero by lag~6. The effective phase is near co-movement
-  ($\sim\!10^\circ$), \textbf{not} the $90^\circ$ of fixed-phase oscillators --- whose
-  CCF is a rigid cosine, so they are refuted.
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.92\linewidth]{p7_overaccumulation.png}
-    \caption{CCF profits$\leftrightarrow$investment: contemporaneous co-movement
-    plus a delayed negative feedback (investment maturing $\sim$1 year earlier
-    depresses current profits). Robust to excluding 2008/2020.}
-  \end{figure}
-  The event study shows profits turning down first and an investment--profit gap that
-  \textbf{builds up $\sim$1--1.5 years before the trough} --- the overaccumulation
-  buildup of Tapia Granados (2012), re-confirmed by an independent method.
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.92\linewidth]{p8_composite_crisis.png}
-    \caption{Composite of NBER recessions aligned at the investment trough.}
-  \end{figure}
+\begin{block}{El ciclo, a la vista}
+  \centering
+  \includegraphics[width=0.95\linewidth]{p15_crisis_series.png}\\
+  \raggedright\normalsize Ganancias e inversión suben juntas en los auges y se desploman en cada
+  recesión (correlación $\approx+0{,}7$); franjas grises = recesiones NBER.
+\end{block}
+
+\begin{block}{La firma: un feedback retardado (no instantáneo)}
+  \centering
+  \includegraphics[width=0.82\linewidth]{p7_overaccumulation.png}\\
+  \raggedright\large
+  La correlación cruzada \textbf{oscila}: pico contemporáneo (rezagos 0--1, el acelerador) y un
+  \textbf{valle negativo en el rezago~4} ($\sim$1 año, la sobreacumulación). El máximo está en el
+  rezago~0, \emph{no} a un cuarto de ciclo: los osciladores de fase fija quedan
+  \textbf{descartados} ---por $R^2$ del campo dinámico (gradient matching): FN $-2{,}6$, LV
+  $+0{,}04$, lineal $+0{,}05$, \textbf{acumulación $+0{,}06$ (el mejor)}.
 \end{block}
 
 \end{column}
 
-% ===================== RIGHT COLUMN =====================
+% ===================== COLUMNA DERECHA =====================
 \begin{column}{\colw}
 
-\begin{block}{The maturation lag is recovered --- and stable}
-  \large
-  Five methods converge on a maturation lag of $\approx\!4$ quarters (empirical kernel,
-  distributed-lag regression, $\mathrm{VAR}(p\!\ge\!4)$, hierarchical pooling, and the
-  differentiable inverse). The \textbf{Fourier-feature inverse PINN} recovers a known
-  synthetic lag with $8.9\%$ error and estimates $\mathbf{0.98}$\textbf{ years} on real
-  data; the lag is stable to the difference transform and to leave-one-crisis-out.
-  \begin{table}\centering\large
-    \begin{tabular}{@{}lll@{}}
-      \toprule
-      Inverse variant & Synthetic (true 4q) & Real lag \\
-      \midrule
-      Single-shooting / convolution & 1.86q (54\% err) & collapses, non-physical \\
-      Per-crisis pooled & 1.64q (59\% err) & 0.84q ($\bar R^2{=}0.86$) \\
-      \textbf{Fourier features} & \textbf{4.36q (8.9\%)} & \textbf{0.98 yr} ($R^2{=}1$) \\
-      \bottomrule
-    \end{tabular}
-    \caption{Only Fourier features both fit the series and recover the lag.}
-  \end{table}
+\begin{block}{\textcolor{good}{El efecto y su lag SÍ se identifican} (inverso bayesiano, Turing)}
+  \centering
+  \includegraphics[width=0.95\linewidth]{p17_bayes_lag.png}\\
+  \raggedright\large
+  El coeficiente de sobreacumulación es \textbf{significativamente negativo}, $k\approx-0{,}40$,
+  y \textbf{robusto}: errores Newey--West $p=0{,}01$; un \emph{placebo} de 2000 desplazamientos
+  deja al $k$ real en el percentil~0 (a $3\sigma$ del azar); no es overfitting (6 parámetros para
+  312 datos). El \textbf{posterior del retardo se concentra} en $\mu\approx5$ trim
+  $[2{,}9;7{,}4]$ (vs prior plano), y el de $k$ \emph{no} cruza cero. \textbf{El efecto y su lag
+  de $\sim$1 año están identificados} (convergen CCF, regresión robusta y bayesiano).
 \end{block}
 
-\begin{block}{Central result: what \emph{cannot} be identified}
-  \large
-  The feedback explains only $\sim\!3\%$ of the variance of profit growth (vs.\
-  $\sim\!35\%$ for the contemporaneous co-movement). Three honest limits follow:
-  \medskip
-
-  \begin{itemize}\large
-    \item \textbf{Width is not identifiable.} The likelihood profile in the delay
-      spread is flat; the data cannot separate a genuinely \emph{distributed}
-      (stochastic) delay from a \emph{point} delay.
-    \item \textbf{Not crisis-specific.} A kernel placebo over non-crisis windows finds
-      the negative lobe roughly as often off-crisis ($p\!=\!0.34$) --- the mechanism is
-      \emph{structural and permanent}, not a signature of the turn of the cycle.
-    \item \textbf{Observationally equivalent to a linear VAR.} A fitted
-      $\mathrm{VAR}(p\!\ge\!4)$ reproduces the negative lobe from its coefficients alone
-      (Lyapunov CCF). The maturation model is an interpretable reparameterisation of
-      that linear content, not a mechanism separable from it with these data.
-  \end{itemize}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.86\linewidth]{p12_var_lyapunov_ccf.png}
-    \caption{Theoretical CCF of a fitted $\mathrm{VAR}(p)$ vs.\ the empirical CCF: for
-    $p\!\ge\!4$ the linear model already reproduces the lag 4--5 lobe.}
-  \end{figure}
-  A bifurcation analysis finds \textbf{no} delay-induced Hopf instability, so we do
-  \emph{not} claim crises to be an endogenous delayed-feedback instability.
+\begin{block}{El PINN inverso NO identifica el retardo --- y por qué}
+  \centering
+  \includegraphics[width=0.95\linewidth]{p16_pinn_physics.png}\\
+  \raggedright\large
+  El inverso diferenciable con red sustituta, barriendo $\lambda_{\text{física}}\times$capacidad
+  con \emph{early stopping} y validación sobre la recesión de 2001, \textbf{no ancla} el retardo
+  (entrenamiento $\gg$ validación; ningún $R^2_{\text{valid}}>0$). \textbf{Por qué:} $\mu$ entra
+  solo por el término \emph{débil} $-k\,m$ ($\sim$3\% de la varianza); la red flexible ajusta los
+  datos y satisface la ODE para un rango ancho de $\mu$ $\Rightarrow$ el costo es \emph{plano} en
+  $\mu$ y la red \textbf{absorbe} la señal que debería anclarlo. El bayesiano, sin red sustituta,
+  no tiene ese problema. \textbf{Lección de método: con señal débil, la calibración probabilística
+  directa le gana a un PINN sobre-flexible.}
 \end{block}
 
-\begin{block}{Conclusion}
+\begin{block}{La frontera de identificabilidad}
   \large
-  The profit--investment overaccumulation feedback is well described by a
-  \textbf{distributed maturation delay centred at $\sim$1 year}, recovered by a
-  differentiable inverse that overcomes the spectral bias and ill-posedness of
-  classical calibration.
-  \medskip
-
-  The robust, transferable result is the \textbf{location of the identifiability
-  frontier}: the delay's \emph{centre} is recoverable and stable, while its
-  \emph{width} and its \emph{separation from a linear model} are not --- a boundary set
-  by signal strength and episode count, not by tuning. \textbf{Pushing past it requires
-  new data} (a multi-country panel, or measured sectoral gestation times), not a
-  reparameterisation.
+  \textbf{Sí se identifica:} el efecto de sobreacumulación y su retardo de $\sim$1 año.\\[4pt]
+  \textbf{No se identifica:} (i) la \emph{dispersión} del núcleo ---los datos no distinguen un
+  retardo distribuido de uno puntual---; (ii) su \emph{separación de un $\mathrm{VAR}(p\!\ge\!4)$}
+  ---el feedback es observacionalmente equivalente a ese modelo lineal (CCF teórica vía
+  Lyapunov)---; (iii) la \emph{especificidad de crisis} (un placebo halla el valle igual fuera de
+  las recesiones, $p\approx0{,}35$). \textbf{Una frontera fijada por la fuerza de la señal
+  ($\sim$3\%) y el número de episodios ($n=9$), no por el ajuste fino.}
 \end{block}
 
-\begin{block}{References \& notes}
+\begin{block}{Conclusión}
+  \large
+  El feedback de sobreacumulación ganancias--inversión es \textbf{real y significativo}, con un
+  retardo distribuido centrado en $\sim$1 año, recuperado por una \textbf{calibración inversa
+  bayesiana} donde un PINN sobre-flexible falla. El aporte robusto es la \textbf{ubicación de la
+  frontera}: qué fija la señal débil y qué no. Cruzarla requiere \emph{datos nuevos} (panel
+  multi-país, tiempos de construcción sectoriales), no más método.
+\end{block}
+
+\begin{block}{Referencias y notas}
   \normalsize
-  Goodwin (1967); Tapia Granados (2012, 2023); Goldstein (1999); Kalecki (1935);
-  Kydland \& Prescott (1982); Raissi et al.\ (2019); Rackauckas et al.\ (2020). \\[4pt]
-  \textbf{Data \& code:} FRED public series; full pipeline reproducible (Python + Julia).
-  AI tools were used to assist drafting and code; all results verified by the author.
+  Tapia (2023); Astarita (2012); Goldstein (1999); Raissi et al.\ (2019). Datos: series públicas
+  de FRED. Código (Python + Julia/SciML) reproducible. Se usó IA como asistente de redacción y
+  código; todos los resultados fueron verificados por el autor.
 \end{block}
 
 \end{column}

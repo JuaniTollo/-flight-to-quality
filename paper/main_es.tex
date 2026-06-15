@@ -18,8 +18,8 @@
 \graphicspath{{figures/}}
 \captionsetup{font=small}
 
-\title{\vspace{-1.2cm}Un retardo distribuido de acumulación en el ciclo\\
-ganancias--inversión: límites de identificabilidad}
+\title{\vspace{-1.2cm}Un retardo distribuido de acumulación en el ciclo ganancias--inversión:\\
+métodos clásicos, un inverso diferenciable y los límites de identificabilidad}
 \author{Juan I. Tollo}
 \date{\today}
 
@@ -39,9 +39,13 @@ modelo físico de \emph{cadena de acumulación} ---una ecuación diferencial con
 distribuido--- y estimamos su retardo con métodos clásicos convergentes (núcleo empírico,
 rezagos distribuidos, $\mathrm{VAR}$, agrupamiento jerárquico): el retardo de $\approx$1 año es
 estable a la transformación de la serie y a excluir las crisis extremas (2008/2020). El
-resultado central es de \emph{identificabilidad}: el \emph{centro} del retardo se identifica de
-forma robusta, pero su \emph{dispersión} no, y el feedback es observacionalmente equivalente a
-un modelo lineal $\mathrm{VAR}(p\!\ge\!4)$ al nivel de la autocovarianza de segundo orden.
+resultado central es de \emph{identificabilidad}, ubicado con precisión. El efecto de
+sobreacumulación y su retardo de $\sim$1 año \emph{sí} se identifican: un inverso bayesiano
+(Turing.jl) concentra el posterior del retardo en $\sim$5 trimestres y da un coeficiente
+significativamente negativo (robusto a errores Newey--West y a un placebo), convergiendo con la
+CCF y una regresión clásica. Lo que \emph{no} se identifica es más fino: la \emph{dispersión} del
+núcleo y su separación de un $\mathrm{VAR}(p\!\ge\!4)$. Un inverso diferenciable con red sustituta
+(PINN, en Julia/SciML) tropieza con un trade-off capacidad/sobreajuste que el bayesiano evita.
 \end{abstract}
 
 \section{Introducción}
@@ -99,10 +103,14 @@ negativo en $k=-4$ significa que la inversión de hace 4 trimestres se asocia co
 \emph{menores} hoy. (ii) Un \emph{estudio de evento}: se alinean las doce recesiones del NBER
 en una misma ventana y se promedia, para ver el patrón típico sin que ningún episodio domine.
 
-\paragraph{El modelo físico.} Modelamos la acumulación como una \emph{cadena}: la inversión
-atraviesa $n$ etapas antes de deprimir las ganancias. Por el ``truco de la cadena lineal''
-(un resultado estándar de ecuaciones con retardo), esto equivale a que el retardo siga una
-distribución Gamma de media $\mu$:
+\paragraph{El modelo físico.} El acelerador (las ganancias estimulan la inversión) es
+instantáneo y no problemático; lo difícil es la otra dirección. Modelamos la acumulación como una
+\emph{cadena}: la inversión no deprime las ganancias de golpe sino que atraviesa $n$ etapas
+---se construye, entra en operación, agrega capacidad, presiona la rentabilidad--- cada una con
+una constante de tiempo $\theta$. Formalmente, $\dot m_j=(m_{j-1}-m_j)/\theta$ con $m_0=I$. Por el
+``\emph{truco de la cadena lineal}'' (un resultado estándar de ecuaciones con retardo), esa
+cascada de $n$ etapas es \emph{exactamente} equivalente a filtrar la inversión por un núcleo
+Gamma de media $\mu=n\theta$ y dispersión $\sqrt{n}\,\theta$. El sistema agregado es entonces
 \begin{equation}
 \dot P = c\,I - d\,P - k\,m,\qquad
 \dot I = a\,P - b\,I,\qquad
@@ -119,6 +127,22 @@ clásicos: el núcleo empírico de la regresión de las ganancias sobre rezagos 
 una regresión de rezagos distribuidos, la CCF implícita de un $\mathrm{VAR}(p)$ ajustado, y un
 agrupamiento jerárquico que combina las crisis para estimar un retardo poblacional. La evidencia
 del retardo es la \emph{convergencia} de los cuatro, no un único método.
+
+\paragraph{El inverso diferenciable (PINN).} Como quinto estimador ---y como sonda de
+identificabilidad--- calibramos los parámetros físicos $(a,b,c,d,k,\mu)$ con un \emph{inverso
+diferenciable} (Julia/SciML). Una red sustituta $t\mapsto[P,I]$ aproxima las trayectorias; se
+entrena minimizando $\mathcal L=\mathcal L_{\text{datos}}+\lambda\,\mathcal L_{\text{física}}+
+\lambda_{\text{reg}}\lVert\theta_{\text{red}}\rVert^2$, donde $\mathcal L_{\text{física}}$ es el
+residuo de la ODE (con $m$ la convolución de $I$ por el núcleo Gamma) en puntos de colocación, y
+se optimizan \emph{a la vez} los pesos de la red y los parámetros físicos (Adam; Zygote para los
+gradientes). La entrada usa \emph{features de Fourier} ---senos y cosenos de varias frecuencias---
+porque una red sobre el tiempo crudo sufre \emph{sesgo espectral} y no representa las oscilaciones
+de la ventana. Para que el inverso sea honesto seguimos las salvaguardas estándar contra el
+sobreajuste: una red con \emph{menos pesos que datos}, regularización $\lambda_{\text{reg}}$
+(\emph{weight decay}), un peso de la física $\lambda$ dominante, y un conjunto de \emph{validación}
+reservado (1 de cada 5 puntos) para medir generalización. Validamos primero en datos
+\emph{sintéticos} (generados por el modelo con un retardo conocido): si no recupera un retardo que
+sabemos verdadero, no es creíble en datos reales.
 
 \paragraph{Controles de identificabilidad.} \emph{Identificable} significa que los datos
 bastan para fijar un parámetro; si distintos valores ajustan igual de bien, no lo está. Lo
@@ -194,9 +218,34 @@ verosimilitud \emph{agrupado} sobre las crisis alcanza su máximo en $\mu\approx
 identificación del \emph{centro} emerge solo al \emph{agrupar} los episodios, mientras que la
 \emph{dispersión} del núcleo no se identifica en absoluto (Fig.~\ref{fig:model}, centro).
 
+\paragraph{El efecto de sobreacumulación es real y su lag se identifica (inverso bayesiano).}
+Que el centro se identifique al agrupar no es un artefacto. Una regresión de la ganancia sobre la
+inversión \emph{madurada} $m$ ---controlando por la inversión contemporánea y la ganancia
+rezagada--- da un coeficiente de sobreacumulación \emph{significativamente negativo}:
+$k\approx-0{,}40$ ($t\approx-3{,}3$ en 1948--2026; $t\approx-2{,}2$ en 1990--2026), robusto a la
+ventana y a $\mu\in[3,6]$. No es overfitting (6 parámetros para 312 datos) ni significancia
+espuria: con errores robustos a autocorrelación (Newey--West) $t\approx-2{,}6$ ($p=0{,}01$), y un
+\emph{placebo} de 2000 desplazamientos circulares que rompen la relación deja al $k$ real en el
+percentil~0 (a $3\sigma$ del azar). Un inverso \emph{bayesiano} (Turing.jl, NUTS) lo cierra con
+incertidumbre: el posterior del retardo se \emph{concentra} en $\mu\approx4{,}8$ trim
+$[2{,}9;7{,}4]$ (contra un prior plano hasta 12), y el de $k$ es negativo con IC95\%
+$[-0{,}66;-0{,}09]$ que \emph{no} cruza cero (Fig.~\ref{fig:bayes}). El efecto y su lag de
+$\sim$1 año están identificados ---convergen la CCF, una regresión robusta y el posterior---; lo
+que \emph{no} se identifica es más fino (abajo).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{p17_bayes_lag.png}
+\caption{Inverso bayesiano del retardo (Turing.jl/NUTS, log-trim, 1948--2026). \emph{Izquierda:}
+el posterior de $\mu$ (azul) se concentra cerca de $\sim$5 trimestres, mucho más angosto que el
+prior (gris): el dato \emph{informa} el retardo. \emph{Derecha:} el posterior del coeficiente de
+sobreacumulación $k$ queda a la izquierda de cero ---el efecto es significativo.}
+\label{fig:bayes}
+\end{figure}
+
 \paragraph{Lo que no puede identificarse.}
 El feedback explica solo $\sim$3\% de la varianza del crecimiento de las ganancias (contra
-$\sim$24\% del co-movimiento contemporáneo). De esa debilidad se siguen cuatro límites:
+$\sim$24\% del co-movimiento contemporáneo). De esa debilidad se siguen tres límites:
 \begin{itemize}
 \item \textbf{La dispersión del retardo no es identificable:} el perfil de verosimilitud en el
 ancho de la distribución es plano; los datos no distinguen un retardo genuinamente
@@ -208,11 +257,6 @@ es \emph{estructural y permanente}, no una firma del giro del ciclo.
 $\mathrm{VAR}(p\!\ge\!4)$ ajustado (vía la ecuación de Lyapunov) reproduce el valle negativo
 desde sus coeficientes solamente. El modelo de acumulación es una \emph{reparametrización
 interpretable} de ese contenido lineal, no un mecanismo separable de él con estos datos.
-\item \textbf{El término de sobreacumulación no se identifica por separado:} una descomposición
-OLS de $-k\,m$ sobre los datos reales da $\beta_m\approx+0{,}02$ ($t\approx0{,}15$, no
-significativa; signo \emph{contrario} al esperado) con $\Delta R^2\approx0$, porque la inversión
-acumulada $m$ es colineal con la inversión contemporánea $I$. No podemos atribuir a la
-acumulación un canal causal separable del co-movimiento contemporáneo.
 \end{itemize}
 
 \begin{figure}[t]
@@ -226,6 +270,34 @@ frente al ancho del núcleo (rango de $R^2\approx0{,}012$) ---el \emph{ancho} no
 Gamma muy distintos (casi puntual vs ancho) ajustan los datos por igual. El $R^2$ es el del
 ajuste OLS del modelo al variar sus parámetros, no una validación de red.}
 \label{fig:model}
+\end{figure}
+
+\paragraph{Un inverso diferenciable (PINN) ilustra una dificultad de \emph{método}, no de datos.}
+También probamos un inverso con red sustituta (PINN; Raissi et al., 2019, en Julia/SciML) con las
+salvaguardas estándar: red más chica que los datos, \emph{weight decay}, pérdida física dominante,
+\emph{early stopping} y validación sobre un bloque de crisis retenido (la recesión de 2001). El
+PINN tropieza con un \emph{trade-off de capacidad}: barriendo $\lambda_{\text{física}}\times$
+capacidad (de $\approx$80 a $\approx$2200 pesos), una red chica no representa la serie y una grande
+la \emph{interpola} ($R^2$ de entrenamiento $\gg$ de validación); ningún punto del barrido evita el
+sobreajuste \emph{e} identifica el retardo, y $\hat\mu$ no se ancla. \textbf{Por qué no mejora:}
+$\mu$ entra solo por el término \emph{débil} $-k\,m$ ($\sim$3\% de la varianza), y la red sustituta
+---flexible--- ajusta los datos \emph{y} satisface aproximadamente la ODE para un rango ancho de
+$\mu$; el costo queda casi \emph{plano} en $\mu$ y su gradiente es ínfimo. La red \emph{absorbe} la
+señal que debería anclar el retardo. El inverso \emph{bayesiano} de arriba ---sin red sustituta, 6
+parámetros directos--- deja que ese término débil informe $\mu$, y por eso \emph{sí} lo identifica.
+La lección de método: con señal débil, la flexibilidad de la red es lo que destruye la
+identificabilidad; una calibración probabilística directa le gana a un PINN sobre-flexible.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{p16_pinn_physics.png}
+\caption{PINN inverso (Julia/SciML): barrido $\lambda_{\text{física}}\times$capacidad con early
+stopping y validación sobre la recesión de 2001 (log-trim). \emph{Izquierda:} el $R^2$ de
+entrenamiento (verde/naranja sólidos) supera al de validación (punteados) ---sobreajuste, peor en
+la red grande--- y \emph{ninguna} configuración logra $R^2_{\text{valid}}>0$. \emph{Derecha:} el
+retardo $\hat\mu$ no se ancla en el $\sim$1 año clásico (línea gris): el inverso con red sustituta
+no identifica el retardo, a diferencia del bayesiano.}
+\label{fig:pinn}
 \end{figure}
 
 \section{Discusión y conclusiones}
@@ -249,14 +321,10 @@ separación de un modelo lineal, no lo son ---una frontera fijada por la fuerza 
 el número de episodios, no por el ajuste fino. Cruzarla requiere datos nuevos, no una
 reparametrización.
 
-\textbf{Trabajo futuro.} Una extensión natural es calibrar el núcleo físico con un inverso
-diferenciable ---una red neuronal informada por la física (PINN; Raissi et al., 2019) con
-\emph{features} de Fourier para sortear el sesgo espectral. En datos sintéticos, con un retardo
-conocido, el método lo recupera; pero una calibración limpia sobre la serie real exige pesar la
-pérdida física con suficiente fuerza para que la red no interpole los datos e ignore la ODE
----algo que con la ponderación que probamos no se logró. Esa calibración bien condicionada, y un
-panel multi-país que aporte más episodios para resolver la dispersión del retardo, son los pasos
-siguientes.
+\textbf{Trabajo futuro.} Cruzar la frontera requiere más \emph{señal}, no más método: un panel
+multi-país que aporte muchos más episodios ---para resolver la dispersión del retardo---, o
+tiempos de construcción sectoriales medidos que predigan el núcleo macro (un test que un VAR en
+forma reducida no puede pasar).
 
 \section*{Agradecimientos}
 El autor utilizó Claude (Anthropic) como asistente para redacción, figuras y código de los
@@ -267,8 +335,8 @@ que asume la responsabilidad por el contenido.
 Los datos son series públicas de FRED: ganancias corporativas (\texttt{A053RC1Q027SBEA}),
 inversión privada bruta (\texttt{GPDI}) y recesiones del NBER (\texttt{USREC}), con un snapshot
 versionado para reproducir sin re-descargar. El código (Python~3.12 para el análisis empírico;
-Julia con \texttt{Lux.jl}, \texttt{DifferentialEquations.jl} y \texttt{Zygote.jl} para el inverso
-diferenciable de trabajo futuro) está en \url{https://github.com/JuaniTollo/-flight-to-quality},
+Julia con \texttt{Lux.jl}, \texttt{Zygote.jl} y \texttt{Optimisers.jl} para el inverso
+diferenciable (PINN)) está en \url{https://github.com/JuaniTollo/-flight-to-quality},
 con entornos fijados
 (\texttt{uv.lock}, \texttt{Manifest.toml}). Series FRED de dominio público; librerías de código
 abierto (MIT/BSD).
