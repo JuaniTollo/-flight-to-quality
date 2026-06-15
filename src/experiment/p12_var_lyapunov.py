@@ -71,8 +71,8 @@ def load_qoq():
     Índice con frecuencia trimestral explícita (evita el ValueWarning de statsmodels)."""
     df = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
     q = pd.DataFrame({
-        "profits": df["PROFITS"].pct_change(1) * 100.0,
-        "investment": df["INVESTMENT"].pct_change(1) * 100.0,
+        "profits": np.log(df["PROFITS"]).diff() * 100.0,
+        "investment": np.log(df["INVESTMENT"]).diff() * 100.0,
     }).dropna()
     q.index = pd.PeriodIndex(q.index, freq="Q").to_timestamp(how="end")
     q.index.freq = q.index.inferred_freq

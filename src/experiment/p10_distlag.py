@@ -50,8 +50,8 @@ def load_qoq():
     """QoQ = pct_change(1) sobre NIVELES PROFITS, INVESTMENT (transform honesto)."""
     df = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
     out = pd.DataFrame(index=df.index)
-    out["PROF"] = df["PROFITS"].pct_change(1) * 100.0
-    out["INV"] = df["INVESTMENT"].pct_change(1) * 100.0
+    out["PROF"] = np.log(df["PROFITS"]).diff() * 100.0
+    out["INV"] = np.log(df["INVESTMENT"]).diff() * 100.0
     return out.dropna()
 
 

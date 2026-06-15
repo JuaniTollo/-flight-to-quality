@@ -50,8 +50,8 @@ def qoq_levels():
     """Construye QoQ = pct_change(1) (en %) desde los NIVELES PROFITS, INVESTMENT."""
     df = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
     out = pd.DataFrame(index=df.index)
-    out["P"] = df["PROFITS"].pct_change(1) * 100.0
-    out["I"] = df["INVESTMENT"].pct_change(1) * 100.0
+    out["P"] = np.log(df["PROFITS"]).diff() * 100.0
+    out["I"] = np.log(df["INVESTMENT"]).diff() * 100.0
     return out.dropna()
 
 

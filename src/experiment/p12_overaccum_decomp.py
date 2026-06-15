@@ -40,8 +40,8 @@ def gamma_kernel(mu, shape=SHAPE, kmax=KMAX):
 def load_window(from_year=1990):
     df = pd.read_csv(CSVP)
     df = df.dropna(subset=["PROFITS", "INVESTMENT"]).reset_index(drop=True)
-    P = 100 * df["PROFITS"].pct_change()      # QoQ
-    I = 100 * df["INVESTMENT"].pct_change()
+    P = 100 * np.log(df["PROFITS"]).diff()      # QoQ
+    I = 100 * np.log(df["INVESTMENT"]).diff()
     yr = df["DATE"].str[:4].astype(int)
     keep = (yr >= from_year) & P.notna() & I.notna()
     z = lambda v: (v - v.mean()) / v.std()
