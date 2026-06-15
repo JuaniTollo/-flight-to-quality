@@ -1,7 +1,7 @@
-% Póster A0 vertical (beamerposter). Compilar en Overleaf o con tectonic.
-% Autoexplicativo: cada bloque tiene su conclusión en negrita. Figuras en figures/.
+% Póster A0 vertical (beamerposter). Autoexplicativo para público general:
+% cada técnica se explica en lenguaje llano (las no vistas en la materia, con más detalle).
 \documentclass[final]{beamer}
-\usepackage[size=a0,orientation=portrait,scale=1.25]{beamerposter}
+\usepackage[size=a0,orientation=portrait,scale=1.22]{beamerposter}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage{graphicx}
@@ -16,6 +16,7 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}{\small\insertcaption}
 \setbeamerfont{block title}{size=\large,series=\bfseries}
+\newcommand{\jerga}[1]{\textcolor{accent}{\textbf{#1}}}
 
 \newlength{\colw}\setlength{\colw}{0.47\paperwidth}
 
@@ -24,61 +25,63 @@
 
 % ===================== ENCABEZADO =====================
 \begin{beamercolorbox}[wd=\paperwidth,sep=20pt,center]{block title}
-  {\veryHuge\bfseries Un retardo distribuido de acumulación\\[8pt]
-   en el ciclo ganancias--inversión}\\[14pt]
-  {\Large métodos clásicos, un inverso diferenciable y los límites de identificabilidad}\\[16pt]
+  {\veryHuge\bfseries ¿La inversión, al madurar, deprime las ganancias?}\\[10pt]
+  {\Large Un retardo distribuido de acumulación en el ciclo ganancias--inversión de EE.UU.,
+   y hasta dónde los datos permiten afirmarlo}\\[14pt]
   {\large\bfseries Juan I. Tollo \quad\textbar\quad
    Datos, Ecuaciones Diferenciales e Inteligencia Artificial (DM2026) \quad\textbar\quad Exactas--UBA}
 \end{beamercolorbox}
-\vspace{0.8cm}
+\vspace{0.7cm}
 
 \begin{columns}[t]
 
 % ===================== COLUMNA IZQUIERDA =====================
 \begin{column}{\colw}
 
-\begin{block}{La pregunta}
+\begin{block}{La idea económica, en una frase}
   \large
-  En la tradición de \textbf{sobreacumulación} (Tapia 2023; Astarita 2012), la inversión, al
-  \emph{madurar} en capacidad instalada, deprime la ganancia con retardo. El ciclo tiene
-  \textbf{dos direcciones}:
+  Las empresas invierten cuando las ganancias son altas; pero esa inversión, al \textbf{madurar}
+  (construirse y agregar capacidad), termina \textbf{deprimiendo las ganancias} un tiempo después.
+  Es la hipótesis de \emph{sobreacumulación} (Tapia 2023; Astarita 2012). Hay \textbf{dos efectos
+  con tiempos distintos}:
   \begin{itemize}\large
-    \item ganancias $\to$ inversión: positiva, \textbf{$\sim$1 trimestre} (acelerador, fuerte);
-    \item inversión $\to$ ganancias: negativa, \textbf{$\sim$1 año} (sobreacumulación, débil).
+    \item ganancias $\to$ inversión: rápido, \textbf{$\sim$1 trimestre} (el acelerador, fuerte);
+    \item inversión $\to$ ganancias: lento y \emph{negativo}, \textbf{$\sim$1 año} (lo que estudiamos).
   \end{itemize}
-  Los modelos clásicos (predador--presa de Goodwin/Lotka--Volterra) imponen un antagonismo
-  \emph{instantáneo}, de fase fija ($90^\circ$). \textbf{Preguntamos:} ¿es instantáneo o
-  \emph{retardado}? \textbf{Encontramos lo segundo} y medimos hasta dónde llegan los datos.
+  \textbf{Pregunta:} ¿ese segundo efecto existe, cuánto tarda, y los datos alcanzan para afirmarlo?
 \end{block}
 
-\begin{block}{Datos y modelo}
+\begin{block}{Qué medimos y cómo (con el diccionario)}
   \large
-  Ganancias e inversión trimestrales de EE.UU.\ (FRED, 1948--2026), en crecimiento
-  \emph{log trimestre a trimestre} (la transformación interanual inyecta estructura espuria de
-  orden 4 en el rezago de interés). \textbf{Modelo físico:} la inversión atraviesa $n$ etapas de
-  maduración; por el \emph{truco de la cadena lineal}, eso equivale a un \textbf{retardo
-  distribuido con núcleo Gamma} de media $\mu$:
-  \[\dot P = c\,I - d\,P - k\,m,\quad \dot I = a\,P - b\,I,\quad m(t)=\textstyle\sum_j w_j(\mu)\,I(t-j).\]
-  El término $-k\,m$ es la sobreacumulación. Estimamos el retardo con \textbf{métodos clásicos} y
-  con \textbf{dos inversos en Julia/SciML}: uno diferenciable (PINN) y uno bayesiano (Turing).
+  Ganancias e inversión trimestrales de EE.UU.\ (1948--2026), en \textbf{crecimiento} (no en
+  nivel). El modelo: la inversión pasa por etapas de maduración, lo que matemáticamente da un
+  \jerga{retardo distribuido} ---el efecto no llega de golpe sino \emph{repartido} en varios
+  trimestres; su \emph{centro} $\mu$ es el retardo típico que queremos medir:
+  \[\dot P = c\,I - d\,P - \underbrace{k\,m}_{\text{sobreacumulación}},\qquad
+    m(t)=\textstyle\sum_j w_j(\mu)\,I(t-j).\]
+  \footnotesize ($P$=ganancias, $I$=inversión, $m$=inversión ``madurada''.)\\[4pt]
+  \large Lo atacamos con tres lentes: una \textbf{descriptiva} (la correlación cruzada), y dos
+  \textbf{inversos} ---estimar los parámetros físicos a partir de los datos--- en Julia/SciML:
+  un \jerga{PINN} y un \jerga{inverso bayesiano}.
 \end{block}
 
-\begin{block}{El ciclo, a la vista}
+\begin{block}{La firma en los datos: un eco retardado}
   \centering
-  \includegraphics[width=0.95\linewidth]{p15_crisis_series.png}\\
-  \raggedright\normalsize Ganancias e inversión suben juntas en los auges y se desploman en cada
-  recesión (correlación $\approx+0{,}7$); franjas grises = recesiones NBER.
-\end{block}
-
-\begin{block}{La firma: un feedback retardado (no instantáneo)}
-  \centering
-  \includegraphics[width=0.82\linewidth]{p7_overaccumulation.png}\\
+  \includegraphics[width=0.80\linewidth]{p7_overaccumulation.png}\\
   \raggedright\large
-  La correlación cruzada \textbf{oscila}: pico contemporáneo (rezagos 0--1, el acelerador) y un
-  \textbf{valle negativo en el rezago~4} ($\sim$1 año, la sobreacumulación). El máximo está en el
-  rezago~0, \emph{no} a un cuarto de ciclo: los osciladores de fase fija quedan
-  \textbf{descartados} ---por $R^2$ del campo dinámico (gradient matching): FN $-2{,}6$, LV
-  $+0{,}04$, lineal $+0{,}05$, \textbf{acumulación $+0{,}06$ (el mejor)}.
+  La \jerga{correlación cruzada} (CCF) mide cuánto se parecen las dos series cuando una se
+  adelanta o atrasa $k$ trimestres. Acá \textbf{oscila}: un pico cuando van juntas (rezago~0) y un
+  \textbf{valle negativo en el rezago~4} ($\sim$1 año): la inversión de hace un año se asocia con
+  ganancias \emph{menores} hoy. Los modelos clásicos ``predador--presa'' (de fase fija) predicen
+  el pico \emph{corrido}, no en cero: \textbf{quedan descartados} (su ajuste es peor que el de
+  nuestro modelo de acumulación).
+\end{block}
+
+\begin{block}{El ciclo, a la vista (sin tecnicismos)}
+  \centering
+  \includegraphics[width=0.92\linewidth]{p15_crisis_series.png}\\
+  \raggedright\normalsize Ganancias e inversión suben juntas en los auges y se desploman en cada
+  recesión (franjas grises = recesiones de EE.UU.).
 \end{block}
 
 \end{column}
@@ -86,57 +89,59 @@
 % ===================== COLUMNA DERECHA =====================
 \begin{column}{\colw}
 
-\begin{block}{\textcolor{good}{El efecto y su lag SÍ se identifican} (inverso bayesiano, Turing)}
+\begin{block}{\textcolor{good}{El efecto y su retardo SÍ se pueden medir} (inverso bayesiano)}
   \centering
-  \includegraphics[width=0.95\linewidth]{p17_bayes_lag.png}\\
+  \includegraphics[width=0.92\linewidth]{p17_bayes_lag.png}\\
   \raggedright\large
-  El coeficiente de sobreacumulación es \textbf{significativamente negativo}, $k\approx-0{,}40$,
-  y \textbf{robusto}: errores Newey--West $p=0{,}01$; un \emph{placebo} de 2000 desplazamientos
-  deja al $k$ real en el percentil~0 (a $3\sigma$ del azar); no es overfitting (6 parámetros para
-  312 datos). El \textbf{posterior del retardo se concentra} en $\mu\approx5$ trim
-  $[2{,}9;7{,}4]$ (vs prior plano), y el de $k$ \emph{no} cruza cero. \textbf{El efecto y su lag
-  de $\sim$1 año están identificados} (convergen CCF, regresión robusta y bayesiano).
+  Un \jerga{inverso bayesiano} (con la herramienta \emph{Turing} de la materia) no da un único
+  número sino una \textbf{distribución de probabilidad} (un \emph{posterior}): si es angosta, los
+  datos \emph{determinan} el valor; si es ancha, no. Resultado: el posterior del \textbf{retardo se
+  concentra} en $\sim$5 trimestres (mucho más angosto que la suposición inicial), y el del
+  \textbf{efecto de sobreacumulación $k$ es negativo} (su intervalo no toca el cero). \\[4pt]
+  ¿No será sobreajuste? \textbf{No:} son apenas \textbf{6 parámetros para 312 datos} ---no hay
+  margen para ``memorizar''--- y el mismo resultado aparece en distintos períodos (1948 en adelante
+  y 1990 en adelante).
 \end{block}
 
-\begin{block}{El PINN inverso NO identifica el retardo --- y por qué}
+\begin{block}{El otro inverso (PINN) NO lo logra --- y eso enseña algo}
   \centering
-  \includegraphics[width=0.95\linewidth]{p16_pinn_physics.png}\\
+  \includegraphics[width=0.92\linewidth]{p16_pinn_physics.png}\\
   \raggedright\large
-  El inverso diferenciable con red sustituta, barriendo $\lambda_{\text{física}}\times$capacidad
-  con \emph{early stopping} y validación sobre la recesión de 2001, \textbf{no ancla} el retardo
-  (entrenamiento $\gg$ validación; ningún $R^2_{\text{valid}}>0$). \textbf{Por qué:} $\mu$ entra
-  solo por el término \emph{débil} $-k\,m$ ($\sim$3\% de la varianza); la red flexible ajusta los
-  datos y satisface la ODE para un rango ancho de $\mu$ $\Rightarrow$ el costo es \emph{plano} en
-  $\mu$ y la red \textbf{absorbe} la señal que debería anclarlo. El bayesiano, sin red sustituta,
-  no tiene ese problema. \textbf{Lección de método: con señal débil, la calibración probabilística
-  directa le gana a un PINN sobre-flexible.}
+  Un \jerga{PINN} (red neuronal informada por la física: aprende la trayectoria \emph{obligada} a
+  obedecer la ecuación diferencial) \textbf{no logra fijar el retardo}: sea cual sea su tamaño,
+  o \emph{memoriza} los datos (sobreajuste: ajusta el entrenamiento pero falla en datos reservados)
+  o no representa la serie. \textbf{Por qué:} el retardo entra solo por un efecto \emph{débil}
+  ($\sim$3\% de la señal), y la red, flexible, lo \emph{tapa}. El inverso bayesiano, sin esa red,
+  sí lo mide. \textbf{Lección: con señal débil, estimar directamente le gana a una red neuronal
+  sobre-flexible.}
 \end{block}
 
-\begin{block}{La frontera de identificabilidad}
+\begin{block}{Hasta dónde llegan los datos (la ``frontera'')}
   \large
-  \textbf{Sí se identifica:} el efecto de sobreacumulación y su retardo de $\sim$1 año.\\[4pt]
-  \textbf{No se identifica:} (i) la \emph{dispersión} del núcleo ---los datos no distinguen un
-  retardo distribuido de uno puntual---; (ii) su \emph{separación de un $\mathrm{VAR}(p\!\ge\!4)$}
-  ---el feedback es observacionalmente equivalente a ese modelo lineal (CCF teórica vía
-  Lyapunov)---; (iii) la \emph{especificidad de crisis} (un placebo halla el valle igual fuera de
-  las recesiones, $p\approx0{,}35$). \textbf{Una frontera fijada por la fuerza de la señal
-  ($\sim$3\%) y el número de episodios ($n=9$), no por el ajuste fino.}
+  \jerga{Identificabilidad} = ¿los datos alcanzan para fijar un parámetro, o muchos valores
+  ajustan igual de bien?
+  \begin{itemize}\large
+    \item \textcolor{good}{\textbf{SÍ se puede:}} que el efecto \emph{existe} y que su retardo es
+      $\sim$1 año.
+    \item \textbf{NO se puede:} (i) la \emph{forma} fina del retardo (repartido vs de un solo
+      golpe); (ii) distinguirlo de un \jerga{VAR} ---un modelo lineal estándar de series de tiempo
+      que reproduce el mismo patrón sin ``mecanismo''---; (iii) que sea propio de las crisis (el
+      valle aparece también fuera de las recesiones, no solo en ellas).
+  \end{itemize}
+  \textbf{La señal débil ($\sim$3\%) alcanza para el \emph{qué} (el efecto), no para el \emph{cómo}
+  fino. Cruzar esa frontera pide datos nuevos, no más método.}
 \end{block}
 
 \begin{block}{Conclusión}
   \large
-  El feedback de sobreacumulación ganancias--inversión es \textbf{real y significativo}, con un
-  retardo distribuido centrado en $\sim$1 año, recuperado por una \textbf{calibración inversa
-  bayesiana} donde un PINN sobre-flexible falla. El aporte robusto es la \textbf{ubicación de la
-  frontera}: qué fija la señal débil y qué no. Cruzarla requiere \emph{datos nuevos} (panel
-  multi-país, tiempos de construcción sectoriales), no más método.
-\end{block}
-
-\begin{block}{Referencias y notas}
-  \normalsize
-  Tapia (2023); Astarita (2012); Goldstein (1999); Raissi et al.\ (2019). Datos: series públicas
-  de FRED. Código (Python + Julia/SciML) reproducible. Se usó IA como asistente de redacción y
-  código; todos los resultados fueron verificados por el autor.
+  El feedback de sobreacumulación ganancias$\to$inversión es \textbf{real y significativo}, con un
+  retardo de $\sim$1 año, medido por una \textbf{calibración inversa bayesiana} donde un PINN
+  sobre-flexible falla. El aporte transferible es \textbf{ubicar la frontera}: qué fija la señal
+  débil y qué no.
+  \medskip\\
+  \footnotesize\textbf{Referencias:} Tapia (2023); Astarita (2012); Goldstein (1999); Raissi et
+  al.\ (2019). Datos públicos de FRED; código (Python + Julia/SciML) reproducible. Se usó IA como
+  asistente; los resultados fueron verificados por el autor.
 \end{block}
 
 \end{column}
