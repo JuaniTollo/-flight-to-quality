@@ -63,7 +63,7 @@ baja la rentabilidad, ``una crisis por sobreacumulación, o sobreinversión'', n
 subacumulación--- es la contribución de Astarita (2012) a la teoría de las crisis. El antecedente formal de estos
 osciladores es la dinámica de Lotka--Volterra (LV), usada en macrodinámica y
 estimada para el ciclo de ganancias por Goldstein (1999). En un sistema LV, las dos variables
-oscilan con un \emph{desfase fijo de $90^\circ$}: el predador sigue a la presa con un cuarto de
+oscilan con un \emph{desfase fijo}: el predador sigue a la presa con un cuarto de
 ciclo de atraso, siempre, por construcción.
 
 \paragraph{Nuestra pregunta.} Planteamos una pregunta más acotada y mecanística: ¿el feedback
@@ -166,7 +166,7 @@ estudio de evento sobre las recesiones NBER es consistente con ese patrón ---la
 tienden a girar antes que la inversión, que corre por delante antes del valle (el \emph{buildup}
 de sobreacumulación)---, aunque el adelanto exacto es sensible al anclaje. El máximo de la CCF
 está en el rezago~0, no a un cuarto de ciclo de atraso como
-exige una oscilación de fase fija (LV, FN; los $90^\circ$ de la introducción): por eso esos
+exige una oscilación de fase fija (LV, FN): por eso esos
 osciladores quedan descartados ---su CCF es un coseno que no puede combinar un pico
 contemporáneo con un valle negativo retardado.
 
@@ -182,7 +182,7 @@ $\sim$1 año antes deprime las ganancias actuales). Robusto a excluir 2008/2020.
 \paragraph{Los osciladores de fase fija fallan cuantitativamente.}
 La incompatibilidad estructural se confirma con un ajuste directo. Calibramos cada modelo por
 \emph{gradient matching} ---ajustar el campo vectorial $f(P,I)$ a la velocidad observada
-$(\dot P,\dot I)$, el método con que esta literatura testea los osciladores tipo Goodwin--- sobre
+$(\dot P,\dot I)$, el método con que esta literatura testea los osciladores predador--presa--- sobre
 el \emph{mismo} objetivo y en log-trim, y medimos el $R^2$ del campo (Tabla~\ref{tab:models}).
 Los predador--presa de fase fija no describen la dinámica: FN da un $R^2$ fuertemente negativo y
 LV apenas $+0{,}04$. El modelo de acumulación propuesto es el mejor de los candidatos: su término
@@ -313,13 +313,14 @@ crisis de posguerra utilizables y una señal del $\sim$3\% de la varianza, los d
 separar un retardo genuinamente distribuido de uno puntual, ni el mecanismo de acumulación de
 un VAR lineal de memoria larga.
 
-\textbf{Conclusión.} El feedback de sobreacumulación ganancias--inversión queda bien descripto
-por un retardo distribuido de acumulación centrado en $\sim$1 año, convergente entre varios
-métodos clásicos. El resultado robusto y transferible es la \emph{ubicación de la frontera de
-identificabilidad}: el centro del retardo es recuperable y estable; su dispersión, y su
-separación de un modelo lineal, no lo son ---una frontera fijada por la fuerza de la señal y
-el número de episodios, no por el ajuste fino. Cruzarla requiere datos nuevos, no una
-reparametrización.
+\textbf{Conclusión.} El feedback de sobreacumulación ganancias--inversión es \emph{real y
+significativo} ---el inverso bayesiano y una regresión robusta dan $k<0$ con $p<0{,}01$---,
+con un retardo distribuido centrado en $\sim$1 año. La clave de identificabilidad: la señal
+débil ($\sim$3\%), con 312 trimestres, \emph{alcanza} para establecer el \emph{efecto} y su
+\emph{lag}, pero \emph{no} para resolver lo fino ---su \emph{dispersión} (distribuido vs puntual)
+y su \emph{separación de un VAR} no se identifican, y la especificidad de crisis pide más que los
+$n=9$ episodios disponibles. El resultado transferible es \emph{dónde} cae esa frontera: lo que la
+señal fija (el efecto) y lo que no (la forma fina). Cruzarla requiere datos nuevos, no más método.
 
 \textbf{Trabajo futuro.} Cruzar la frontera requiere más \emph{señal}, no más método: un panel
 multi-país que aporte muchos más episodios ---para resolver la dispersión del retardo---, o
