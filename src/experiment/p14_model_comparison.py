@@ -140,19 +140,38 @@ def main():
           f"(negativo ⇒ PROP mejor incluso penalizando el parámetro extra)")
     print(f"  ΔR²(PROP − LV)  = {r2c['PROP'] - r2c['LV']:+.3f}   ΔR²(PROP − FN) = {r2c['PROP'] - r2c['FN']:+.3f}")
 
-    # ---- figura ----
-    fig, ax = plt.subplots(figsize=(8, 4.6))
+    # ---- figura: 2 paneles (vista completa + zoom) ----
     vals = [r2c[nm] for nm in order]
+    labels = [nice[nm] for nm in order]
     colors = ["tab:red", "tab:orange", "tab:blue", "tab:green"]
-    bars = ax.bar([nice[nm] for nm in order], vals, color=colors, alpha=0.85)
-    ax.axhline(0, color="k", lw=0.8)
-    ax.set_ylabel("R² del campo dinámico (gradient matching)")
-    ax.set_title("¿Qué modelo describe la dinámica ganancias–inversión? (log-trim)\n"
-                 "los osciladores de fase fija (LV, FN) fallan; el modelo de acumulación ajusta")
-    for b, v in zip(bars, vals):
-        ax.annotate(f"{v:+.2f}", (b.get_x() + b.get_width() / 2, v),
-                    ha="center", va="bottom" if v >= 0 else "top", fontsize=9)
-    ax.set_ylim(min(min(vals) - 0.05, -0.05), max(vals) + 0.08)
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(11, 4.6),
+                                   gridspec_kw={"width_ratios": [1, 1.1]})
+
+    # panel izquierdo: vista completa (se ve el desastre del FN)
+    bL = axL.bar(labels, vals, color=colors, alpha=0.85)
+    axL.axhline(0, color="k", lw=0.8)
+    axL.set_ylabel("R² del campo dinámico")
+    axL.set_title("Vista completa", fontsize=10)
+    for b, v in zip(bL, vals):
+        axL.annotate(f"{v:+.2f}", (b.get_x() + b.get_width() / 2, v),
+                     ha="center", va="bottom" if v >= 0 else "top", fontsize=9)
+    axL.set_ylim(min(vals) - 0.2, max(vals) + 0.1)
+    axL.tick_params(axis="x", labelrotation=20, labelsize=7)
+
+    # panel derecho: zoom a los positivos (se distingue LV vs lineal vs propuesto)
+    bR = axR.bar(labels, vals, color=colors, alpha=0.85)
+    axR.axhline(0, color="k", lw=0.8)
+    axR.set_title("Zoom a los positivos", fontsize=10)
+    for b, v in zip(bR, vals):
+        if v > -0.01:
+            axR.annotate(f"{v:+.3f}", (b.get_x() + b.get_width() / 2, v),
+                         ha="center", va="bottom", fontsize=9)
+    axR.set_ylim(-0.01, max(vals) + 0.02)
+    axR.tick_params(axis="x", labelrotation=20, labelsize=7)
+
+    fig.suptitle("¿Qué modelo describe la dinámica ganancias–inversión? (R² de campo, log-trim)\n"
+                 "los osciladores de fase fija (LV, FN) fallan; el modelo de acumulación ajusta mejor",
+                 fontsize=11)
     fig.tight_layout(); fig.savefig(C.OUTDIR / "p14_model_comparison.png", dpi=130); plt.close(fig)
     print(f"\n✓ figura: {C.OUTDIR}/p14_model_comparison.png")
 
