@@ -136,7 +136,7 @@ def main():
     ax[2].set_title("Dos kernels que ajustan IGUAL\n(indistinguibles con esta data)")
     ax[2].set_xlabel("lag k (trim)"); ax[2].set_ylabel("peso del kernel"); ax[2].legend(fontsize=8)
     fig.suptitle("Modelo físico de acumulación: el centro del lag se identifica, el ancho no", fontsize=12)
-    fig.tight_layout(); fig.savefig(C.OUTDIR / "p11_physical_delay.png", dpi=130); plt.close(fig)
+    fig.tight_layout(); fig.savefig(C.OUTDIR / "p11_physical_delay.pdf"); fig.savefig(C.OUTDIR / "p11_physical_delay.png", dpi=200); plt.close(fig)
     print(f"✓ figura: {C.OUTDIR}/p11_physical_delay.png")
     print("\nVEREDICTO: modelo físico (cadena de maduración) válido y diferenciable; el lag de "
           "\nmaduración ~1 año es un parámetro físico identificable, pero el ancho de su "

@@ -47,7 +47,7 @@ def main():
     ax.set_xlabel("año")
     ax.legend(loc="lower left", fontsize=9, ncol=2, framealpha=0.9)
     ax.margins(x=0.01)
-    fig.tight_layout(); fig.savefig(C.OUTDIR / "p15_crisis_series.png", dpi=130); plt.close(fig)
+    fig.tight_layout(); fig.savefig(C.OUTDIR / "p15_crisis_series.pdf"); fig.savefig(C.OUTDIR / "p15_crisis_series.png", dpi=200); plt.close(fig)
     print(f"✓ figura: {C.OUTDIR}/p15_crisis_series.png")
     # correlación de co-movimiento (informativa para el pie)
     r = z["Ganancias"].corr(z["Inversión"])

@@ -150,7 +150,7 @@ function main(; n_epochs=4000, from_year=1990)
     plot!(p2,λs,[g(λ,24,:μ) for λ in λs],xscale=:log10,marker=:diamond,lw=2,c=:darkorange,label="red grande")
     hline!(p2,[5.0],ls=:dash,c=:gray,label="~1 año (clásicos)")
     fig=plot(p1,p2,layout=(1,2),size=(1150,450),plot_title="PINN inverso: λ × capacidad de red (log-trim)")
-    savefig(fig,joinpath(OUTDIR,"p16_pinn_physics.png")); println("\n✓ figura: ",joinpath(OUTDIR,"p16_pinn_physics.png"))
+    savefig(fig,joinpath(OUTDIR,"p16_pinn_physics.pdf")); savefig(fig,joinpath(OUTDIR,"p16_pinn_physics.png")); println("\n✓ figura: ",joinpath(OUTDIR,"p16_pinn_physics.pdf"))
     open(joinpath(REPO,"results","p16_pinn_physics.csv"),"w") do io
         println(io,"lambda,pesos,mu_trim,r2_train,r2_valid")
         for λ in λs, h in hs; r=grid[(λ,h)]; @printf(io,"%.3g,%d,%.4f,%.4f,%.4f\n",λ,r.np,r.μ,r.r2tr,r.r2va); end

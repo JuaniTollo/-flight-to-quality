@@ -58,7 +58,7 @@ def main():
     ax.annotate("BOOM\nprofits→investment", (0.5, 0.6), fontsize=8, color="tab:blue", ha="center")
     ax.annotate("SOBREACUMULACIÓN\ninvest pasada → profits↓", (-4.5, -0.35), fontsize=8, color="tab:red", ha="center")
     ax.legend(fontsize=8); ax.set_ylim(-0.6, 0.8)
-    fig.tight_layout(); fig.savefig(C.OUTDIR / "p7_overaccumulation.png", dpi=130); plt.close(fig)
+    fig.tight_layout(); fig.savefig(C.OUTDIR / "p7_overaccumulation.pdf"); fig.savefig(C.OUTDIR / "p7_overaccumulation.png", dpi=200); plt.close(fig)
 
     def g(c, k): return c[k + KMAX]
     print("=== Pieza 7 — ciclo endógeno de sobreacumulación (CCF) ===")

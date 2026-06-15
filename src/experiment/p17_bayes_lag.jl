@@ -77,7 +77,7 @@ function main(; n_samples=1000, seed=1)
     vline!(p2, [0.0], c=:black, lw=2, ls=:dash, label="k=0")
     fig = plot(p1, p2, layout=(1,2), size=(1100,440),
                plot_title="Inverso bayesiano (Turing): el retardo (μ≈5t, ~1 año) y la sobreacumulación (k<0) SÍ se identifican")
-    savefig(fig, joinpath(OUTDIR, "p17_bayes_lag.png"))
+    savefig(fig, joinpath(OUTDIR, "p17_bayes_lag.pdf")); savefig(fig, joinpath(OUTDIR, "p17_bayes_lag.png"))
     println("\n✓ figura: ", joinpath(OUTDIR, "p17_bayes_lag.png"))
     open(joinpath(REPO,"results","p17_bayes_lag.csv"),"w") do io
         println(io,"param,media,ic_lo,ic_hi")
