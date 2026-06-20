@@ -77,8 +77,14 @@ def fit_constrained():
     return res.x
 
 
-def sys_matrix(mu_q, k, a=A_, b=B_, c=C_, d=D_):
-    """Matriz 6×6 del sistema linealizado; mu_q en trimestres, tiempo en años."""
+def sys_matrix(mu_q, k, a=None, b=None, c=None, d=None):
+    """Matriz 6×6 del sistema linealizado; mu_q en trimestres, tiempo en años.
+    OJO: usa los globales A_,B_,C_,D_ vigentes si no se pasan explícitos (antes los fijaba
+    como defaults al cargar el módulo → ignoraba la reestimación de main; bug corregido)."""
+    if a is None: a = A_
+    if b is None: b = B_
+    if c is None: c = C_
+    if d is None: d = D_
     mu_y = mu_q / 4.0                  # años
     theta = mu_y / SHAPE              # años por etapa
     r = 1.0 / theta                  # tasa
@@ -150,19 +156,13 @@ def main():
     fig.tight_layout(); fig.savefig(C.OUTDIR / "p13_bifurcation.png", dpi=130); plt.close(fig)
     print(f"\n✓ figura: {C.OUTDIR}/p13_bifurcation.png")
 
-    print("\nVEREDICTO honesto (DOS ESCALAS DE TIEMPO — no confundirlas):")
-    print(f"  (1) RETARDO de maduración μ≈1 año: el micro-mecanismo (identificado robusto en forma "
-          f"reducida). NO es el botón de la bifurcación: barrer μ a k fijo no cruza Re(λ)=0.")
-    print(f"  (2) PERÍODO emergente del sistema ≈{per0:.0f} años: el ciclo LARGO que genera el feedback. "
-          f"Es un objeto distinto del lag (el período de un oscilador es varias veces su retardo).")
-    print("  Ajustado sobre ventanas de crisis, el sistema sale DÉBILMENTE INESTABLE (max Re(λ)≈+0.05, "
-          "foco que espirala): un ciclo endógeno recurrente. El botón del Hopf es el AMORTIGUAMIENTO "
-          "(d→0), no el retardo; el ajuste sobre crisis empuja d→0, justo pasando la bifurcación.")
-    print("  CAUTELA: ~13 años matchea las expansiones largas recientes (2009→2020 = 12,2) y el ciclo "
-          "'profundo' (cada dos recesiones), NO el ritmo postguerra medio (~6,5 años). Y d=0, μ=1 pegan "
-          "contra los bordes y Re(λ) está al filo ⇒ el número es BLANDO, y no se separa de un oscilador "
-          "lineal pateado por ruido (muro VAR). Lectura defendible como CICLO LARGO emergente, no como "
-          "afirmación cerrada; cerrar la brecha pide datos nuevos (panel multi-país), no más método.")
+    print("\nVEREDICTO honesto: el PERÍODO y hasta el SIGNO de la estabilidad NO se identifican. "
+          "Con los parámetros consistentes del ajuste restringido el sistema sale amortiguado "
+          "(Re(λ)<0, período ~22 a); con μ en el valor identificado (~5 trim) sale levemente inestable "
+          "(~23 a); el '13 años' previo venía de mezclar b<0 del Fourier (artefacto). Es decir: el "
+          "período es ruido de parámetros mal identificados (d, b pegan contra sus cotas), no un "
+          "resultado. NO afirmamos nada sobre el período ni sobre un ciclo largo. Lo único robusto es "
+          "el RETARDO de sobreacumulación (~5 trim): la inversión lidera la caída de ganancias ~1 año.")
 
 
 if __name__ == "__main__":
