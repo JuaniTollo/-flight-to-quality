@@ -150,12 +150,19 @@ def main():
     fig.tight_layout(); fig.savefig(C.OUTDIR / "p13_bifurcation.png", dpi=130); plt.close(fig)
     print(f"\n✓ figura: {C.OUTDIR}/p13_bifurcation.png")
 
-    print("\nVEREDICTO honesto: ni con params crudos ni con la estimación restringida emerge un Hopf "
-          "INDUCIDO POR EL RETARDO. La inestabilidad proviene del bajo amortiguamiento (d→0), no del "
-          "lag; y la estimación estructural discrepa en μ (≈1) con el distributed-lag (≈4), reflejando "
-          "el muro de identificabilidad. ⇒ el reframe 'crisis = inestabilidad por retardo' NO se "
-          "sostiene con estos datos. Requeriría identificación estructural más fuerte (panel multi-país "
-          "o restricciones micro de gestación), no un reajuste sobre la misma serie.")
+    print("\nVEREDICTO honesto (DOS ESCALAS DE TIEMPO — no confundirlas):")
+    print(f"  (1) RETARDO de maduración μ≈1 año: el micro-mecanismo (identificado robusto en forma "
+          f"reducida). NO es el botón de la bifurcación: barrer μ a k fijo no cruza Re(λ)=0.")
+    print(f"  (2) PERÍODO emergente del sistema ≈{per0:.0f} años: el ciclo LARGO que genera el feedback. "
+          f"Es un objeto distinto del lag (el período de un oscilador es varias veces su retardo).")
+    print("  Ajustado sobre ventanas de crisis, el sistema sale DÉBILMENTE INESTABLE (max Re(λ)≈+0.05, "
+          "foco que espirala): un ciclo endógeno recurrente. El botón del Hopf es el AMORTIGUAMIENTO "
+          "(d→0), no el retardo; el ajuste sobre crisis empuja d→0, justo pasando la bifurcación.")
+    print("  CAUTELA: ~13 años matchea las expansiones largas recientes (2009→2020 = 12,2) y el ciclo "
+          "'profundo' (cada dos recesiones), NO el ritmo postguerra medio (~6,5 años). Y d=0, μ=1 pegan "
+          "contra los bordes y Re(λ) está al filo ⇒ el número es BLANDO, y no se separa de un oscilador "
+          "lineal pateado por ruido (muro VAR). Lectura defendible como CICLO LARGO emergente, no como "
+          "afirmación cerrada; cerrar la brecha pide datos nuevos (panel multi-país), no más método.")
 
 
 if __name__ == "__main__":
