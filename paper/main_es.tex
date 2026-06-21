@@ -128,22 +128,6 @@ una regresión de rezagos distribuidos, la CCF implícita de un $\mathrm{VAR}(p)
 agrupamiento jerárquico que combina las crisis para estimar un retardo poblacional. La evidencia
 del retardo es la \emph{convergencia} de los cuatro, no un único método.
 
-\paragraph{El inverso diferenciable (PINN).} Como quinto estimador ---y como sonda de
-identificabilidad--- calibramos los parámetros físicos $(a,b,c,d,k,\mu)$ con un \emph{inverso
-diferenciable} (Julia/SciML). Una red sustituta $t\mapsto[P,I]$ aproxima las trayectorias; se
-entrena minimizando $\mathcal L=\mathcal L_{\text{datos}}+\lambda\,\mathcal L_{\text{física}}+
-\lambda_{\text{reg}}\lVert\theta_{\text{red}}\rVert^2$, donde $\mathcal L_{\text{física}}$ es el
-residuo de la ODE (con $m$ la convolución de $I$ por el núcleo Gamma) en puntos de colocación, y
-se optimizan \emph{a la vez} los pesos de la red y los parámetros físicos (Adam; Zygote para los
-gradientes). La entrada usa \emph{features de Fourier} ---senos y cosenos de varias frecuencias---
-porque una red sobre el tiempo crudo sufre \emph{sesgo espectral} y no representa las oscilaciones
-de la ventana. Para que el inverso sea honesto seguimos las salvaguardas estándar contra el
-sobreajuste: una red con \emph{menos pesos que datos}, regularización $\lambda_{\text{reg}}$
-(\emph{weight decay}), un peso de la física $\lambda$ dominante, y un conjunto de \emph{validación}
-reservado (1 de cada 5 puntos) para medir generalización. Validamos primero en datos
-\emph{sintéticos} (generados por el modelo con un retardo conocido): si no recupera un retardo que
-sabemos verdadero, no es creíble en datos reales.
-
 \paragraph{Controles de identificabilidad.} \emph{Identificable} significa que los datos
 bastan para fijar un parámetro; si distintos valores ajustan igual de bien, no lo está. Lo
 evaluamos con: (i) un \emph{perfil de verosimilitud} en $\mu$ (barrerlo fijándolo y reajustando
@@ -161,7 +145,13 @@ contemporáneo dominante en los rezagos 0--1 ($\rho(0)\approx+0{,}5$) ---las gan
 la inversión por $\sim$1 trimestre, la dirección \emph{fuerte} (el acelerador)--- y un valle
 \emph{negativo} en el rezago~4 ($\approx-0{,}2$) ---la inversión de hace $\sim$1 año deprime las
 ganancias, la dirección \emph{débil} de sobreacumulación que estudiamos---, que vuelve a cero
-hacia el rezago 6 (Fig.~\ref{fig:ccf}). Un
+hacia el rezago 6 (Fig.~\ref{fig:ccf}). Ese valle no es un artefacto de filtrado ni de la
+autocorrelación de las series: la CCF se computa sin suavizado y el valle a 4 trimestres cae
+\emph{fuera} de un \emph{null} por surrogates AR que preserva la autocorrelación marginal de cada
+serie y el co-movimiento contemporáneo, pero destruye el feedback cruzado retardado ($p\approx0{,}006$).
+Su magnitud cruda ($\approx-0{,}22$) está, eso sí, parcialmente inflada por la autocorrelación
+---un efecto de tipo Slutsky--Yule---: la estimación a reportar es la \emph{condicional} (el $k$ del
+inverso bayesiano, más abajo), no el valor crudo de la CCF. Un
 estudio de evento sobre las recesiones NBER es consistente con ese patrón ---las ganancias
 tienden a girar antes que la inversión, que corre por delante antes del valle (el \emph{buildup}
 de sobreacumulación)---, aunque el adelanto exacto es sensible al anclaje. El máximo de la CCF
@@ -172,41 +162,24 @@ contemporáneo con un valle negativo retardado.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.58\linewidth]{p7_overaccumulation.pdf}
-\caption{Correlación cruzada ganancias$\leftrightarrow$inversión. La función oscila: fuerte
-co-movimiento contemporáneo y un feedback negativo retardado (la inversión acumulada
-$\sim$1 año antes deprime las ganancias actuales). Robusto a excluir 2008/2020.}
+\includegraphics[width=\linewidth]{p7b_ccf_surrogate.pdf}
+\caption{Correlación cruzada ganancias$\leftrightarrow$inversión (log-trim, sin suavizado). La
+función oscila: fuerte co-movimiento contemporáneo (rezago 0) y un feedback negativo retardado
+a $\sim$1 año (rezago $-4$). La banda gris es un \emph{null} por surrogates AR que preserva la
+autocorrelación de cada serie y el co-movimiento contemporáneo pero destruye el feedback cruzado:
+el valle a 4 trimestres cae \emph{fuera} de esa banda ($p\approx0{,}006$), de modo que el feedback
+es real, no un artefacto de autocorrelación. Robusto además a excluir 2008/2020.}
 \label{fig:ccf}
 \end{figure}
 
-\paragraph{Los osciladores de fase fija fallan cuantitativamente.}
-La incompatibilidad estructural se confirma con un ajuste directo. Calibramos cada modelo por
-\emph{gradient matching} ---ajustar el campo vectorial $f(P,I)$ a la velocidad observada
-$(\dot P,\dot I)$, el método con que esta literatura testea los osciladores predador--presa--- sobre
-el \emph{mismo} objetivo y en log-trim, y medimos el $R^2$ del campo (Tabla~\ref{tab:models}).
-Los predador--presa de fase fija no describen la dinámica: FN da un $R^2$ fuertemente negativo y
-LV apenas $+0{,}04$. El modelo de acumulación propuesto es el mejor de los candidatos: su término
-$-k\,m$ ---con $k\approx-0{,}42$, el signo económicamente esperado--- mejora sobre el lineal puro
-con $\Delta\mathrm{AIC}\approx-3$. Los $R^2$ absolutos son bajos (la dinámica tiene $\sim$3\% de
-señal): es \emph{selección relativa} de modelos, coherente con la frontera de identificabilidad,
-pero descarta los predador--presa de fase fija de forma cuantitativa.
-
-\begin{table}[h]\centering\small
-\begin{tabular}{@{}lcl@{}}
-\toprule
-Modelo & $R^2$ del campo & \\
-\midrule
-FN (predador--presa, no lineal) & $-2{,}6$ & falla \\
-LV (predador--presa, no lineal) & $+0{,}04$ & $\approx$ nulo \\
-Lineal 2D (Markoviano) & $+0{,}05$ & \\
-\textbf{Acumulación (propuesto)} & $\mathbf{+0{,}06}$ & mejor ($\Delta\mathrm{AIC}=-3$) \\
-\bottomrule
-\end{tabular}
-\caption{$R^2$ del campo dinámico por \emph{gradient matching} (log-trim, mismo objetivo para
-todos). Los osciladores de fase fija fallan; el modelo de acumulación, con su término de
-inversión madurada $-k\,m$, ajusta mejor.}
-\label{tab:models}
-\end{table}
+\paragraph{Un test directo lo confirma.} Un ajuste del campo vectorial por \emph{gradient
+matching} ---la métrica con que esta literatura testea estos osciladores--- coincide con la CCF:
+los predador--presa de fase fija no describen la dinámica (FN da un $R^2$ de campo fuertemente
+negativo, $\approx-2{,}6$; LV es $\approx$nulo, $+0{,}04$), y el fracaso se agrava fuera de muestra.
+Entre modelos \emph{lineales}, en cambio, la señal es demasiado débil ($\sim$3\%) para seleccionar
+uno: ninguno supera $R^2\approx0$ en validación fuera de muestra. El $R^2$ de campo \emph{descarta}
+los osciladores de fase fija pero \emph{no} identifica el retardo ---eso proviene de los métodos de
+abajo, no de este ajuste.
 
 \paragraph{El retardo de acumulación se identifica y es estable.}
 La evidencia central del retardo es la \emph{convergencia} de varios estimadores clásicos en
@@ -272,33 +245,14 @@ ajuste OLS del modelo al variar sus parámetros, no una validación de red.}
 \label{fig:model}
 \end{figure}
 
-\paragraph{Un inverso diferenciable (PINN) ilustra una dificultad de \emph{método}, no de datos.}
-También probamos un inverso con red sustituta (PINN; Raissi et al., 2019, en Julia/SciML) con las
-salvaguardas estándar: red más chica que los datos, \emph{weight decay}, pérdida física dominante,
-\emph{early stopping} y validación sobre un bloque de crisis retenido (la recesión de 2001). El
-PINN tropieza con un \emph{trade-off de capacidad}: barriendo $\lambda_{\text{física}}\times$
-capacidad (de $\approx$80 a $\approx$2200 pesos), una red chica no representa la serie y una grande
-la \emph{interpola} ($R^2$ de entrenamiento $\gg$ de validación); ningún punto del barrido evita el
-sobreajuste \emph{e} identifica el retardo, y $\hat\mu$ no se ancla. \textbf{Por qué no mejora:}
-$\mu$ entra solo por el término \emph{débil} $-k\,m$ ($\sim$3\% de la varianza), y la red sustituta
----flexible--- ajusta los datos \emph{y} satisface aproximadamente la ODE para un rango ancho de
-$\mu$; el costo queda casi \emph{plano} en $\mu$ y su gradiente es ínfimo. La red \emph{absorbe} la
-señal que debería anclar el retardo. El inverso \emph{bayesiano} de arriba ---sin red sustituta, 6
-parámetros directos--- deja que ese término débil informe $\mu$, y por eso \emph{sí} lo identifica.
-La lección de método: con señal débil, la flexibilidad de la red es lo que destruye la
-identificabilidad; una calibración probabilística directa le gana a un PINN sobre-flexible.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{p16_pinn_physics.pdf}
-\caption{PINN inverso (Julia/SciML): barrido $\lambda_{\text{física}}\times$capacidad con early
-stopping y validación sobre la recesión de 2001 (log-trim). \emph{Izquierda:} el $R^2$ de
-entrenamiento (verde/naranja sólidos) supera al de validación (punteados) ---sobreajuste, peor en
-la red grande--- y \emph{ninguna} configuración logra $R^2_{\text{valid}}>0$. \emph{Derecha:} el
-retardo $\hat\mu$ no se ancla en el $\sim$1 año clásico (línea gris): el inverso con red sustituta
-no identifica el retardo, a diferencia del bayesiano.}
-\label{fig:pinn}
-\end{figure}
+\paragraph{Un inverso diferenciable (PINN) no mejora: una lección de método.} Un inverso con red
+sustituta (PINN; Raissi et al., 2019), con las salvaguardas estándar (red más chica que los datos,
+\emph{weight decay}, validación sobre una crisis retenida), \emph{no} identifica el retardo: la
+red ---flexible--- ajusta los datos satisfaciendo la ODE para un rango ancho de $\mu$, así que el
+costo queda casi plano en $\mu$ y la señal débil ($\sim$3\%) que debería anclarlo se \emph{absorbe}
+en la red. El inverso \emph{bayesiano} de arriba ---6 parámetros directos, sin red--- deja que ese
+término débil informe $\mu$ y por eso \emph{sí} lo identifica: con señal débil, la flexibilidad de
+la red destruye la identificabilidad que una calibración probabilística directa preserva.
 
 \section{Discusión y conclusiones}
 
