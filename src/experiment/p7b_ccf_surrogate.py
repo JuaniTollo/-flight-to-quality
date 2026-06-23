@@ -1,6 +1,6 @@
 """Figura Pieza C — BLINDAJE Slutsky-Yule del valle de sobreacumulación.
 
-Reusa EXACTAMENTE la computación de notes/slutsky_yule_check.py:
+Cómputo (autocontenido, sin dependencias internas):
   - CCF cruda corr(P_t, I_{t+k}) sobre log-diff QoQ, z-scoreada, sin suavizado.
   - Null por surrogates AR (AIC) que preservan autocorrelación marginal de cada serie
     y la correlación contemporánea de innovaciones, pero DESTRUYEN el feedback cruzado.
@@ -27,7 +27,7 @@ LAG = 4               # rezago de sobreacumulación (~1 año)
 NS = 2000             # número de surrogates
 
 
-# --------------------------------------------------------------------- núcleo (idéntico a slutsky_yule_check)
+# --------------------------------------------------------------------- núcleo CCF cruda (log-trim QoQ)
 def load_logtrim():
     raw = pd.read_csv(C.DATA, parse_dates=["DATE"]).set_index("DATE")
     g = pd.DataFrame({"P": np.log(raw["PROFITS"]).diff() * 100,

@@ -23,7 +23,7 @@ output/
 # Misc
 *.pdf
 funding/
-DM2026-Curso/
+third_parties/
 bibliography/
 .claude/settings.local.json
 contexto_repo_limpio.txt
