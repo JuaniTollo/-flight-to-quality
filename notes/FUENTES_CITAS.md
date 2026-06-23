@@ -29,15 +29,19 @@ el esquema causal endógeno y el modelo predador-presa que enmarca nuestro traba
 
 **Citas textuales (verbatim) que respaldan lo que afirmamos:**
 
-- p. 183: *"I propose a causal endogenous scheme ... a kind of predator–prey model"*
-  (ganancias = presa; inversión = predador).
-- p. 184: *"Movements in profits are followed some quarters later by movements in
-  investment in the same direction, and movements in investment are followed by
-  movements in profits in the opposite direction. Crises are preceded by drops in
-  profitability."*
-- p. 186: *"the direction from past investment to present profits, with the change in
-  investment showing a negative lagged effect on the change in profits ... though in my
-  analyses it looked as a weaker one."*
+- pp. 183–184 (pasaje continuo): *"I propose a causal endogenous scheme of the business
+  cycle in which profits and investment are linked in a kind of predator–prey model.
+  Movements in profits are followed some quarters later by movements in investment in the
+  same direction, and movements in investment are followed by movements in profits in the
+  opposite direction. Crises are preceded by drops in profitability."* (el salto de página
+  183→184 cae dentro de la oración "Movements in profits …"; ganancias = presa, inversión =
+  predador.)
+- p. 186 (oración única, verbatim exacto): *"Statistical models also provide evidence—though
+  in my analyses it looked as a weaker one—of another regularity between profits and
+  investment, but this one in the direction from past investment to present profits, with
+  the change in investment showing a negative lagged effect on the change in profits—so that
+  a change in investment is generally followed by a change in profits in the opposite
+  direction."*
 
 **Qué autoriza afirmar en el paper:**
 - La estructura **bidireccional** ganancias↔inversión (las dos direcciones).
