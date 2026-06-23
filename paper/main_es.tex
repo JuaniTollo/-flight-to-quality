@@ -41,15 +41,12 @@ $\rho(0)=0$, justo lo contrario de la fuerte correlación contemporánea que obs
 $\rho(0)\approx+0{,}5$. Proponemos en cambio un modelo físico de \emph{cadena de acumulación}: una
 ecuación diferencial con retardo distribuido. Identificamos el \emph{centro} de ese retardo ---$\sim$5 trimestres, alrededor de un año--- con un
 inverso bayesiano que lo estima con su incertidumbre, confirmado por la convergencia de varios
-métodos clásicos; su \emph{distribución}, en cambio, no se identifica. El mismo posterior pone casi toda su
-masa en un coeficiente de sobreacumulación negativo (una regresión robusta lo confirma: $k<0$ con
-$p<0{,}01$). El efecto
-y su retardo de $\sim$1 año \emph{sí} se identifican, y son robustos: el valle no aparece cuando se
-rompe artificialmente el feedback cruzado ($p\approx0{,}006$, dos colas), no se debe a las crisis
-extremas (2008/2020) ni a cómo se transforma la serie. La magnitud cruda de la correlación cruzada está inflada por la
-autocorrelación (un efecto de tipo Slutsky--Yule); la estimación a reportar es la \emph{condicional}.
-El resultado central es de \emph{identificabilidad}: con una señal que explica apenas $\sim$3\% de la
-varianza, el centro del retardo y el efecto se fijan, pero no su forma fina ni su separación de un
+métodos clásicos; su \emph{distribución}, en cambio, no se identifica. El mismo posterior concentra su
+masa en un coeficiente de sobreacumulación negativo ($k<0$): la inversión madurada deprime la
+ganancia posterior. El efecto y su retardo de $\sim$1 año \emph{sí} se identifican y son robustos
+---no se deben a las crisis extremas (2008/2020) ni a la transformación de la serie---.
+El resultado central es de \emph{identificabilidad}: con una señal que explica apenas un 3\% de la
+varianza, el centro del retardo y el \emph{signo} del efecto se fijan, pero no su forma fina ni su separación de un
 $\mathrm{VAR}(p\!\ge\!4)$.
 \end{abstract}
 
@@ -234,10 +231,9 @@ igual (Fig.~\ref{fig:model}, centro y der.)---, un límite que retomamos en la D
 
 \paragraph{El efecto de sobreacumulación es real.}
 Corremos una regresión de la ganancia sobre la inversión \emph{madurada} $m$, controlando por la
-inversión contemporánea y la ganancia rezagada. El coeficiente es \emph{significativamente
-negativo}: $k\approx-0{,}40$ ($t\approx-3{,}3$ en 1948--2026; $t\approx-2{,}2$ en 1990--2026),
-robusto a la ventana y a $\mu\in[3;6]$, y se mantiene con errores estándar robustos a
-autocorrelación ($t\approx-2{,}6$, $p=0{,}01$). \emph{Que sea negativo} es el punto sustantivo: más
+inversión contemporánea y la ganancia rezagada. El coeficiente es \emph{negativo}:
+$k\approx-0{,}40$, robusto a $\mu\in[3;6]$, y el inverso bayesiano establece su significancia
+(IC95\% que no cruza cero, más abajo). \emph{Que sea negativo} es el punto sustantivo: más
 inversión acumulada $m$ \emph{deprime} la ganancia posterior ---la lectura de sobreacumulación,
 capital que al acumularse erosiona su propia rentabilidad---. No es overfitting (6 parámetros para
 312 datos) ni significancia espuria: un \emph{placebo} de 2000 desplazamientos circulares que rompen
@@ -323,7 +319,7 @@ muestra y una señal del $\sim$3\% de la varianza, los datos no pueden separar u
 distribuido de uno puntual, ni el mecanismo de acumulación de un VAR lineal de memoria larga.
 
 \textbf{Conclusión.} El feedback negativo rezagado ganancias--inversión, \emph{consistente con} la
-sobreacumulación, es \emph{real y significativo} ---una regresión robusta da $k<0$ con $p<0{,}01$ y el posterior bayesiano lo confirma (IC95\% que no cruza cero)---, con un
+sobreacumulación, es \emph{real y significativo} ---el posterior bayesiano lo establece, con un IC95\% que no cruza cero---, con un
 retardo distribuido centrado en $\sim$1 año. La clave de identificabilidad es esta: la señal débil
 ($\sim$3\%), con 312 trimestres, \emph{alcanza} para establecer el \emph{efecto} y su \emph{lag},
 pero \emph{no} para resolver lo fino. Ni su \emph{dispersión} (distribuido vs puntual) ni su
