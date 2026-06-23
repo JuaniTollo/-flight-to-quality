@@ -2,13 +2,13 @@
 
 El placebo (p12_kernel_placebo) mostró que la joroba de lag 4-5 es UBICUA, no firma de
 crisis. Esta pieza responde la pregunta económica que SÍ importa: el término de
-sobreacumulación −k·m (inversión madurada ~1 año atrás deprime ganancias), ¿explica algo
+sobreacumulación +k·m con k<0 (inversión madurada ~1 año atrás deprime ganancias), ¿explica algo
 de la caída de ganancias, por encima del co-movimiento contemporáneo? ¿O es despreciable?
 
 Datos: idénticos al mejor experimento (p12_pinn_fourier) — niveles PROFITS/INVESTMENT,
 QoQ = pct_change(1), ventana 1990–, z-score. dP/dt por diferencias centradas (como el PINN).
 
-Modelo físico (mismo de p11/p12):  dP/dt = c·I − d·P − k·m,  m = Σ_j w_j(μ)·I_{t−j},
+Modelo físico (mismo de p11/p12):  dP/dt = c·I − d·P + k·m,  m = Σ_j w_j(μ)·I_{t−j},
 w = kernel Gamma media μ, shape=4. Lag del PINN Fourier: μ ≈ 3.9 trim.
 
 Test (regresión jerárquica, OLS transparente y atribuible):
@@ -81,7 +81,7 @@ def main():
     Ii, Pi = I[idx], P[idx]
 
     print("=" * 72)
-    print("DESCOMPOSICIÓN — aporte de la sobreacumulación (−k·m) a la dinámica de ganancias")
+    print("DESCOMPOSICIÓN — aporte de la sobreacumulación (+k·m, k<0) a la dinámica de ganancias")
     print("=" * 72)
     print(f"ventana 1990– │ {n} trim QoQ z-score │ {len(idx)} puntos interiores │ lag PINN μ={MU_PINN:.2f}")
 

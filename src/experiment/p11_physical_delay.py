@@ -9,7 +9,7 @@ el *linear chain trick* es exactamente equivalente a una cascada de ODEs:
 
     dI/dt = a·P − b·I                       (acelerador)
     dmⱼ/dt = (mⱼ₋₁ − mⱼ)/θ                  (cadena de n etapas de maduración; m₀ = I)
-    dP/dt = c·I − d·P − k·mₙ                (ganancia: + demanda actual, − sobreacumulación madurada)
+    dP/dt = c·I − d·P + k·mₙ                (ganancia: + demanda actual; +k·mₙ con k<0 = sobreacumulación madurada)
 
 mₙ = inversión filtrada por un kernel Gamma(shape=n, scale=θ): media n·θ (lag de
 maduración), dispersión √n·θ (cuánto fluctúa). Modelo físico, autónomo, DIFERENCIABLE
