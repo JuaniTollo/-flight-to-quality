@@ -40,8 +40,8 @@ fija}, como Lotka--Volterra o FitzHugh--Nagumo. En ellos el desfase entre las do
 $\rho(0)=0$, justo lo contrario de la fuerte correlación contemporánea que observamos,
 $\rho(0)\approx+0{,}5$. Proponemos en cambio un modelo físico de \emph{cadena de acumulación}: una
 ecuación diferencial con retardo distribuido. Identificamos el \emph{centro} de ese retardo ---$\sim$5 trimestres, alrededor de un año--- con un
-inverso bayesiano que lo estima con su incertidumbre, confirmado por la convergencia de varios
-métodos clásicos; su \emph{distribución}, en cambio, no se identifica. El mismo posterior concentra su
+inverso bayesiano que lo estima con su incertidumbre, cotejado con la correlación cruzada; su
+\emph{distribución}, en cambio, no se identifica. El mismo posterior concentra su
 masa en un coeficiente de sobreacumulación negativo ($k<0$): la inversión madurada deprime la
 ganancia posterior. El efecto y su retardo de $\sim$1 año \emph{sí} se identifican y son robustos
 ---no se deben a las crisis extremas (2008/2020) ni a la transformación de la serie---.
@@ -54,7 +54,7 @@ $\mathrm{VAR}(p\!\ge\!4)$. Que el efecto sea débil en varianza no lo vuelve irr
 
 \paragraph{La hipótesis económica.} Las ganancias y la inversión forman un ciclo endógeno. Las
 ganancias altas estimulan la inversión, pero esa misma inversión, al acumularse, erosiona las
-ganancias posteriores. Tapia (2023, pp.~183--186) documenta esta estructura bidireccional para
+ganancias posteriores. Este vaivén se ve directamente en las series trimestrales de EE.UU.\ (Fig.~\ref{fig:series}). Tapia (2023, pp.~183--186) documenta esta estructura bidireccional para
 EE.UU.\ y la formaliza como ``un modelo de tipo depredador--presa'', con las ganancias como presa y
 la inversión como depredador: los movimientos de las ganancias son seguidos ``algunos trimestres
 después por movimientos de la inversión en la misma dirección, y los movimientos de la inversión son
@@ -64,36 +64,45 @@ la inversión sobre la de las ganancias--- es la ``más débil'' (traducción nu
 feedback negativo como \emph{sobreacumulación}: la inversión que, al acumularse en capacidad
 instalada, presiona a la baja la rentabilidad ---``una crisis por sobreacumulación, o
 sobreinversión'', no por subacumulación---. El antecedente formal de estos osciladores es la
-dinámica de Lotka--Volterra (LV), usada en macrodinámica y estimada para el ciclo de ganancias por
-Goldstein (1999). En un sistema LV las dos variables oscilan con un \emph{desfase fijo}: el depredador
+dinámica de Lotka--Volterra (LV), usada en macrodinámica y estimada por Goldstein (1999) para el ciclo del \emph{profit squeeze},
+sobre otras variables (no el par ganancias--inversión que estudiamos aquí). En un sistema LV las dos variables oscilan con un \emph{desfase fijo}: el depredador
 sigue a la presa con un cuarto de ciclo de atraso, siempre, por construcción.
 
 \paragraph{Nuestra pregunta.} Planteamos una pregunta acotada y mecanística. ¿El feedback de la
 inversión hacia las ganancias es un antagonismo \emph{instantáneo}, como imponen esos osciladores?
 ¿O es un antagonismo \emph{retardado}, cuyo tiempo característico refleja la \emph{acumulación} de la
 inversión pasada en capacidad instalada? Encontramos lo segundo. La contribución es descriptiva y
-metodológica: una estimación del retardo de acumulación robusta y estable, convergente entre varios
-métodos clásicos y un inverso bayesiano, junto con una caracterización explícita de \emph{lo que no
-puede identificarse} con estos datos.
+metodológica: una estimación del retardo de acumulación con un inverso bayesiano ---con su
+incertidumbre---, cotejada con la correlación cruzada (sección~\ref{sec:metodos}), junto con una
+caracterización explícita de lo que estos datos \emph{no} permiten identificar: la forma del retardo
+(distribuido vs puntual) y su separación de un VAR de memoria larga. El aporte metodológico, en una
+línea: bajo señal débil, recuperar un parámetro estructural es una cuestión de \emph{cómo} se estima,
+no solo de cuántos datos hay ---una calibración probabilística directa fija el centro del retardo
+donde una red sustituta flexible (PINN) lo disuelve y un VAR en forma reducida no lo separa de sus
+rezagos.
 
-\section{Datos y métodos}
+\section{Datos y métodos}\label{sec:metodos}
 
 \paragraph{Datos.} Usamos series trimestrales de EE.UU.: ganancias corporativas e inversión privada
 bruta (FRED, 1948--2026, $n=313$ trimestres; 312 al pasar a tasas de crecimiento). Trabajamos con tasas de crecimiento \emph{log trimestre a
-trimestre} ($x_t=\log Y_t-\log Y_{t-1}$). Verificamos que la transformación interanual habitual
-(``YoY'', el cambio respecto del mismo trimestre del año anterior) no sirve aquí. Al ser una
-diferencia a 4 trimestres, \emph{inyecta} estructura espuria de orden 4 ---exactamente en el rezago
-de interés--- e infla la magnitud aparente del feedback en un factor $\sim$2.
+trimestre} ($x_t=\log Y_t-\log Y_{t-1}$): es con esta diferencia que el lag de $\sim$1 año aparece de
+forma estable. La transformación interanual habitual (``YoY'', el cambio respecto del mismo trimestre
+del año anterior) no sirve: al ser una diferencia a 4 trimestres, mezcla un año de datos en cada
+punto ---la misma escala del feedback que medimos---, así que la ventana del filtro se confunde con
+la señal y el lag estimado se corre a $\sim$2 trimestres.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{p15_crisis_series.pdf}
-\caption{El ciclo, a la vista. Crecimiento de las ganancias y de la inversión en EE.UU.\
-(suavizado a un año, en desvíos estándar); las franjas grises son las recesiones del NBER.
-Ambas series suben juntas en los auges y se desploman en cada recesión (correlación
-contemporánea $\approx+0{,}7$ en la serie suavizada; la CCF log-trim sin suavizar da
-$\approx+0{,}5$). La lectura de sobreacumulación es que la inversión tiende a
-sostenerse cuando la ganancia ya gira a la baja, antes de las recesiones.}
+\caption{El ciclo, a la vista. Crecimiento log-trimestral de las ganancias y de la inversión en
+EE.UU.\ (en desvíos estándar); las franjas grises son las recesiones del NBER. Las dos series
+\emph{co-mueven fuerte y a la vez} ($\approx+0{,}5$) y se desploman juntas en cada recesión; la
+ganancia adelanta a la inversión por cerca de un trimestre (la correlación con la inversión del
+trimestre siguiente es $+0{,}33$), así que en las caídas la inversión sigue alta cuando la ganancia
+ya giró. Todo esto es el \emph{acelerador} (ganancia$\to$inversión, rápido). El feedback que estudia
+este trabajo es el \emph{opuesto y más lento} ---la inversión deprime la ganancia $\sim$1 año después
+(sobreacumulación)---, más débil y no visible a ojo aquí: se mide con la CCF (valle en el rezago
+$-4$) y el inverso bayesiano más abajo.}
 \label{fig:series}
 \end{figure}
 
@@ -102,13 +111,15 @@ como $\rho(h)=\mathrm{corr}(\text{gan.}_t,\text{inv.}_{t+h})$, decide si hay un 
 co-movimiento. Un valor negativo en $h=-4$ significa que la inversión de hace 4 trimestres se asocia
 con ganancias \emph{menores} hoy. Si la CCF oscila ---cruza a negativo en los rezagos--- hay ciclo;
 si decae a cero, es co-movimiento puro. Como respaldo, un \emph{estudio de evento} ---alinear las
-doce recesiones del NBER y promediar--- corrobora el patrón típico sin que ningún episodio domine.
+doce recesiones del NBER (\emph{National Bureau of Economic Research}, que data oficialmente el ciclo
+de EE.UU.) y promediar--- corrobora el patrón típico sin que ningún episodio domine.
 
 \paragraph{El modelo físico.} El acelerador ---las ganancias estimulan la inversión--- es
 instantáneo y no problemático; lo difícil es la otra dirección, la presión que la inversión ejerce
 \emph{con retardo} sobre las ganancias. Ese retardo no es un número fijo: la inversión se construye,
-entra en operación, agrega capacidad y recién entonces presiona la rentabilidad, de modo que sus
-efectos llegan \emph{repartidos} en el tiempo. Lo modelamos como una \emph{cadena} de $N$ etapas
+entra en operación y agrega capacidad; cuando esa capacidad produce más de lo que el mercado absorbe
+---mercancía que no se realiza---, recién entonces presiona la rentabilidad, de modo que sus efectos
+llegan \emph{repartidos} en el tiempo. Lo modelamos como una \emph{cadena} de $N$ etapas
 iguales, donde cada etapa $j$ persigue a la anterior con una constante de tiempo $\theta$,
 \[
 \frac{\mathrm{d}m_j}{\mathrm{d}t}=\frac{m_{j-1}-m_j}{\theta},\qquad m_0=I.
@@ -121,7 +132,7 @@ Para ver qué hace la cadena, conviene seguir un único pulso de inversión. Tra
 efecto decae como una exponencial $e^{-t/\theta}$; al encadenar $N$ etapas idénticas ---es decir, al
 convolucionar $N$ exponenciales--- el efecto deja de estar pegado al origen y pasa a \emph{subir,
 hacer pico y bajar}. El ``\emph{truco de la cadena lineal}'', un resultado estándar de las ecuaciones
-con retardo, dice que esa respuesta es \emph{exactamente} un núcleo Gamma (Erlang) de forma $N$ y
+con retardo (Smith, 2011), dice que esa respuesta es \emph{exactamente} un núcleo Gamma (Erlang) de forma $N$ y
 escala $\theta$,
 \[
 w(t)\;\propto\;t^{\,N-1}\,e^{-t/\theta}.
@@ -153,59 +164,40 @@ este sistema es \emph{lineal} y su oscilación proviene del \emph{retardo}: es e
 una no linealidad, lo que genera el ciclo, y el desfase lo fijan los datos en lugar de la forma del
 modelo.
 
-\paragraph{Estimación del retardo.} Estimamos el retardo $\mu$ con tres métodos clásicos: la correlación cruzada (CCF), una regresión de
-rezagos distribuidos ---el patrón de coeficientes de la ganancia sobre rezagos sucesivos de la
-inversión dibuja el núcleo del feedback---, y el ajuste de un modelo físico de maduración calibrado
-en conjunto sobre las crisis. La evidencia del retardo es
-la \emph{convergencia} de los tres, no un único método. Un \emph{inverso bayesiano} ---inferir los
-parámetros ($\mu$, $k$) a partir de los datos--- (Turing.jl, NUTS) lo cierra con incertidumbre: en
-vez de un valor puntual entrega un \emph{posterior}, una distribución con intervalos creíbles, sobre
-$\mu$ y sobre el coeficiente $k$.
+\paragraph{Estimación del retardo.} Estimamos el retardo $\mu$ con un \emph{inverso bayesiano} del modelo físico ---inferir los
+parámetros ($\mu$, $k$) a partir de los datos--- (Turing.jl, NUTS), siguiendo el tratamiento de
+problemas inversos de la materia (Sapienza, 2026): en vez de un valor puntual
+entrega un \emph{posterior}, una distribución con intervalos creíbles, sobre $\mu$ y sobre el
+coeficiente $k$. Lo cotejamos con la \emph{correlación cruzada} (CCF), un método que no supone el
+modelo: su valle ubica el retardo de forma independiente. Un inverso \emph{diferenciable} con red
+sustituta (PINN) no mejora la identificación; lo discutimos en el Apéndice.
 
 \paragraph{Controles de identificabilidad.} \emph{Identificable} significa que los datos bastan para
-fijar un parámetro; si distintos valores ajustan igual de bien, no lo está. Lo evaluamos con cinco
+fijar un parámetro; si distintos valores ajustan igual de bien, no lo está. Lo evaluamos con cuatro
 controles. (i) Un \emph{perfil de verosimilitud} en $\mu$: lo barremos fijándolo y reajustando el
-resto, de modo que una curva de ajuste plana indica que $\mu$ no se identifica. (ii)
-\emph{Leave-one-crisis-out}: re-estimamos excluyendo cada crisis. (iii) Un \emph{placebo}: repetimos
-el ejercicio en ventanas sin crisis, ya que si el patrón aparece igual no es firma de las crisis.
-(iv) Un \emph{null} por series sustitutas (\emph{surrogates}) AR, para testear si el valle es un
-artefacto de la autocorrelación: ajustamos un modelo autorregresivo a cada serie por separado (orden
-por AIC) y simulamos $\sim$2000 pares de series artificiales conducidas por innovaciones con la
-misma correlación contemporánea que las reales. Por construcción cada par conserva la autocorrelación
-de cada serie y el co-movimiento a rezago~0, pero rompe el feedback cruzado \emph{retardado}
----cada serie evoluciona solo con su propio pasado---. Para cada par calculamos la CCF; los
-percentiles 2,5/97,5 de los sustitutos en cada rezago dan la banda nula, y el $p$-valor (dos colas)
-en el rezago~4 mide qué tan improbable es el valle observado bajo esa nula. (v) La
-CCF \emph{teórica} de un $\mathrm{VAR}(p)$ ---un modelo lineal donde cada variable depende de sus
-últimos $p$ rezagos---: en lugar de medir la correlación cruzada en los datos, la \emph{deducimos}
-de los coeficientes del VAR ajustado resolviendo la \emph{ecuación de Lyapunov} ---la ecuación
-matricial estándar que da la covarianza estacionaria de un proceso lineal a partir de sus
-coeficientes---. Es la correlación cruzada que el modelo lineal \emph{implicaría}, y sirve para ver
-si un lineal sin mecanismo ya reproduce el patrón observado.
+resto, de modo que una curva de ajuste plana indica que $\mu$ no se identifica. (ii) Un \emph{placebo}: repetimos el ejercicio en ventanas sin crisis; si el valle
+aparece igual, no es firma de las crisis. (iii) Un \emph{null} por series sustitutas (\emph{surrogates}) AR: simulamos $\sim$2000 pares de
+series artificiales que conservan la autocorrelación de cada serie y el co-movimiento contemporáneo,
+pero rompen el feedback cruzado \emph{retardado} ---cada serie evoluciona solo con su propio
+pasado---. Si el valle observado cae fuera de lo que produce esa nula, no es un artefacto de la
+autocorrelación. (iv) La
+CCF que \emph{implicaría} un $\mathrm{VAR}(p)$ ---un modelo lineal donde cada variable depende solo
+de sus últimos $p$ rezagos---: sirve para ver si un modelo \emph{sin mecanismo} ---sin la cadena de
+maduración que postulamos, solo rezagos estadísticos--- ya reproduce el patrón observado.
 
 \section{Resultados}
 
-\paragraph{El patrón: un feedback retardado, no un antagonismo instantáneo.}
-La CCF \emph{oscila} en lugar de decaer, y separa las dos direcciones del ciclo. Tiene un pico
-contemporáneo dominante en los rezagos 0--1 ($\rho(0)\approx+0{,}5$): las ganancias preceden a la
-inversión por $\sim$1 trimestre, la dirección \emph{fuerte} (el acelerador). Y tiene un valle
-\emph{negativo} en el rezago~$-4$ ($\approx-0{,}2$): la inversión de hace $\sim$1 año deprime las
-ganancias, la dirección \emph{débil} de sobreacumulación que estudiamos. Ese valle vuelve a cero
-hacia el rezago $-6$ (Fig.~\ref{fig:ccf}). El valle no es un artefacto de filtrado ni de la
-autocorrelación de las series. La CCF se computa sin suavizado, y el valle a 4 trimestres cae
-\emph{fuera} de un \emph{null} por surrogates AR que preserva la autocorrelación marginal de cada
-serie y el co-movimiento contemporáneo, pero destruye el feedback cruzado retardado
-($p\approx0{,}006$, dos colas). Su magnitud cruda ($\approx-0{,}22$) sí está parcialmente inflada por la
-autocorrelación, un efecto de tipo Slutsky--Yule. Por eso la estimación a reportar es la
-\emph{condicional} ---el $k$ del inverso bayesiano, más abajo---, no el valor crudo de la CCF. Un
-estudio de evento sobre las recesiones NBER es consistente con este patrón: las ganancias tienden a
-girar antes que la inversión, aunque el adelanto exacto es sensible al anclaje. El patrón también es
-decisivo para descartar los osciladores de fase fija. En LV (y FN) el depredador sigue a la presa con
-un \emph{desfase fijo} de un cuarto de ciclo, por construcción. Ese desfase fijo fuerza correlación
-contemporánea \emph{nula} ($\rho(0)=0$) y ubica el máximo a un cuarto de ciclo de atraso. Los datos
-hacen lo contrario: su rasgo dominante es $\rho(0)\approx+0{,}5$, con el máximo en el rezago~0.
-Ningún desfase fijo combina un co-movimiento contemporáneo con un valle negativo retardado, y por
-eso esos osciladores quedan descartados.
+El patrón es un feedback \emph{retardado}, no un antagonismo instantáneo. Para separar las dos
+direcciones del ciclo, la CCF \emph{oscila} en lugar de decaer (Fig.~\ref{fig:ccf}).
+La primera dirección es el pico contemporáneo ($\rho(0)\approx+0{,}5$): las ganancias preceden a la
+inversión por $\sim$1 trimestre, la dirección fuerte (el acelerador), y que la inversión siga a la
+ganancia ---y no la anteceda--- se ve en la asimetría, $+0{,}33$ con la inversión del trimestre
+siguiente contra $+0{,}07$ con la del previo, también en las caídas. La segunda es el valle negativo
+en el rezago~$-4$ ($\approx-0{,}2$): la inversión de hace $\sim$1 año deprime las ganancias, la
+dirección débil de sobreacumulación que estudiamos. Esa forma ---co-movimiento contemporáneo más un
+valle negativo retardado---
+descarta los osciladores de fase fija (LV, FN; Strogatz, 2015): su desfase fijo de un cuarto de ciclo forzaría
+$\rho(0)=0$ con el máximo lejos del origen, lo contrario de lo que muestran los datos.
 
 \begin{figure}[t]
 \centering
@@ -219,32 +211,43 @@ es real, no un artefacto de autocorrelación. Es robusto además a excluir 2008/
 \label{fig:ccf}
 \end{figure}
 
-\paragraph{El retardo de acumulación: el centro se identifica.}
-El centro del retardo se \emph{ubica} de forma concordante por varias vías clásicas en torno a
-$\sim$1 año: la CCF tiene su valle en el rezago~$-4$, la regresión de rezagos distribuidos centra la
-joroba negativa en $\approx$4 trimestres, y el ajuste del modelo físico de maduración ---calibrado sobre las
-crisis--- maximiza su $R^2$ en $\mu\approx5$ trimestres (Fig.~\ref{fig:model}, izq.). La identificación
-emerge al \emph{agrupar} los episodios: por crisis individual el retardo es demasiado ruidoso para
-anclarse (perfiles de ajuste casi planos), pero su centro común se concentra al combinarlas. La
-\emph{dispersión} del núcleo, en cambio, no se identifica ---dos núcleos muy distintos ajustan
-igual (Fig.~\ref{fig:model}, centro y der.)---, un límite que retomamos en la Discusión.
+El retardo se identifica en torno a un año: el inverso bayesiano lo concentra en $\mu\approx4{,}9$
+trimestres $[3{,}0;7{,}3]$, mucho más angosto que el prior, de modo que el dato \emph{informa} $\mu$. Es consistente con el valle de la CCF (en torno a
+los rezagos $-4$/$-5$) y con el ajuste del modelo físico de maduración, cuyo $R^2$ es máximo en
+$\mu\approx5$ trimestres (Fig.~\ref{fig:model}); $\mu$ es la \emph{media} del núcleo ---integra todo
+ese pozo de la CCF, no un rezago aislado---, y por eso cae un poco más allá del rezago más profundo. La identificación emerge al \emph{agrupar} las crisis: por episodio
+individual el retardo es demasiado ruidoso para anclarse, pero su centro común se concentra al
+combinarlas.
 
-\paragraph{El efecto de sobreacumulación es real.}
-Corremos una regresión de la ganancia sobre la inversión \emph{madurada} $m$, controlando por la
-inversión contemporánea y la ganancia rezagada. El coeficiente es \emph{negativo}:
-$k\approx-0{,}40$, robusto a $\mu\in[3;6]$, y el inverso bayesiano establece su significancia
-(IC95\% que no cruza cero, más abajo). \emph{Que sea negativo} es el punto sustantivo: más
-inversión acumulada $m$ \emph{deprime} la ganancia posterior ---la lectura de sobreacumulación,
-capital que al acumularse erosiona su propia rentabilidad---. No es overfitting: 6 parámetros para 312 datos.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{p11_physical_delay.pdf}
+\caption{El modelo físico de acumulación y su frontera de identificabilidad, sobre las crisis
+NBER (log trimestre a trimestre, sin 2008/2020). \emph{Izquierda:} el ajuste ($R^2$ del modelo)
+en función del retardo medio $\mu$ tiene un máximo nítido en $\mu\approx5$ trimestres ($\sim$1
+año) ---el \emph{centro} del retardo se identifica. \emph{Centro:} ese mismo ajuste es plano
+frente al ancho del núcleo (rango de $R^2\approx0{,}012$) ---el \emph{ancho} no se identifica.
+\emph{Derecha:} dos núcleos Gamma con el mismo centro ($\mu=4$ trim) pero forma muy distinta
+---casi puntual ($N=64$ etapas) y ancho ($N=2$)--- ajustan los datos por igual. El $R^2$ es el del
+ajuste OLS del modelo al variar sus parámetros.}
+\label{fig:model}
+\end{figure}
 
-\paragraph{El inverso bayesiano identifica ambos con incertidumbre.}
-El inverso bayesiano (Turing.jl, NUTS) reestima $\mu$ y $k$ con sus \emph{posteriores}. El del
-retardo se \emph{concentra} en $\mu\approx4{,}9$ trim $[3{,}0;7{,}3]$, mucho más angosto que el
-prior (su desvío $\approx$1,1 trim es menos de la mitad que el del prior $\approx$2,3: el dato
-\emph{informa} $\mu$); el de $k$ es negativo con IC95\% $[-0{,}63;-0{,}12]$ que \emph{no} cruza cero
-(Fig.~\ref{fig:bayes}). Efecto y retardo quedan así respaldados por vías concordantes ---CCF,
-regresión robusta y posterior bayesiano---; lo que \emph{no} se identifica (la dispersión, la
-separación de un VAR) lo discutimos a continuación.
+El efecto es negativo, real y estructural. El coeficiente de sobreacumulación es \emph{negativo}:
+una regresión de la ganancia sobre la
+inversión madurada $m$ ---controlando por la inversión contemporánea y la ganancia rezagada--- da
+$k\approx-0{,}40$, y el inverso bayesiano lo confirma con un IC95\% $[-0{,}63;-0{,}12]$ que no cruza
+cero (Fig.~\ref{fig:bayes}). El tamaño del efecto se lee de este $k$ ---el coeficiente
+\emph{condicional} del bayesiano, que descuenta la inversión contemporánea y la ganancia previa---,
+no de la profundidad de la CCF: esa correlación marginal \emph{establece} el feedback y lo
+\emph{ubica} en el rezago $-4$, pero no mide su magnitud estructural. Que sea negativo es el punto sustantivo: la inversión acumulada deprime
+la ganancia posterior, capital que al acumularse erosiona su propia rentabilidad. El efecto es
+estructural y no una firma de las crisis: el placebo compara la profundidad del valle en las
+ventanas de crisis contra la de $\sim$2000 ventanas tomadas al azar fuera de ellas, y la joroba de
+crisis \emph{no} resulta más profunda ($p\approx0{,}35$, una cola). Una firma de crisis habría dado
+lo contrario ---un valle atípicamente profundo en las crisis, con $p$ chico---; que aparezca con la
+misma fuerza fuera de ellas es la marca de un efecto siempre presente, no una falla de potencia del
+test. Y no es sobreajuste: seis parámetros para 312 datos.
 
 \begin{figure}[t]
 \centering
@@ -256,58 +259,31 @@ sobreacumulación $k$ queda a la izquierda de cero ---el efecto es significativo
 \label{fig:bayes}
 \end{figure}
 
-\paragraph{Lo que no puede identificarse.}
+\paragraph{Limitaciones.}
 El feedback explica solo $\sim$3\% de la varianza del crecimiento de las ganancias, contra
-$\sim$24\% del co-movimiento contemporáneo. De esa debilidad se siguen tres límites:
-\begin{itemize}
-\item \textbf{La dispersión del retardo no es identificable:} el perfil de verosimilitud en el
-ancho de la distribución es plano. Los datos no distinguen un retardo genuinamente
-\emph{distribuido} de un retardo \emph{puntual}.
-\item \textbf{El patrón no es específico de las crisis:} el placebo sobre ventanas sin crisis
-encuentra el valle negativo con la misma frecuencia fuera de ellas ($p\approx0{,}35$). El mecanismo
-es \emph{estructural y permanente}, no una firma del giro del ciclo.
-\item \textbf{Equivalencia observacional con un modelo lineal:} la CCF teórica de un
-$\mathrm{VAR}(p\!\ge\!4)$ ajustado (vía la ecuación de Lyapunov) reproduce el valle negativo
-solo desde sus coeficientes. El modelo de acumulación es una \emph{reparametrización
-interpretable} de ese contenido lineal, no un mecanismo separable de él con estos datos.
-\item \textbf{El mecanismo no se separa con dos series:} la inversión acumulada $m$ con coeficiente
-negativo ($k<0$) \emph{operacionaliza} la sobreacumulación ---capital acumulado que erosiona la
-rentabilidad, del lado de la \emph{acumulación} y no del subconsumo---, pero no aísla el
-\emph{canal}: una caída de la ganancia tras la inversión es compatible tanto con sobreacumulación
-(capacidad que un mercado acotado no valida) como con un \emph{profit-squeeze} (la actividad eleva
-costos y comprime la participación). Distinguirlos exigiría datos de mercado y capacidad ---ventas,
-inventarios, utilización--- ausentes en este par de series.
-\end{itemize}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{p11_physical_delay.pdf}
-\caption{El modelo físico de acumulación y su frontera de identificabilidad, sobre las crisis
-NBER (log trimestre a trimestre, sin 2008/2020). \emph{Izquierda:} el ajuste ($R^2$ del modelo)
-en función del retardo medio $\mu$ tiene un máximo nítido en $\mu\approx5$ trimestres ($\sim$1
-año) ---el \emph{centro} del retardo se identifica. \emph{Centro:} ese mismo ajuste es plano
-frente al ancho del núcleo (rango de $R^2\approx0{,}012$) ---el \emph{ancho} no se identifica.
-\emph{Derecha:} dos núcleos Gamma muy distintos (casi puntual vs ancho) ajustan los datos por
-igual. El $R^2$ es el del ajuste OLS del modelo al variar sus parámetros.}
-\label{fig:model}
-\end{figure}
-
-\paragraph{Una nota de método: un inverso diferenciable (PINN) no mejora.} Probamos también un
-inverso con red sustituta (PINN; Raissi et al., 2019), con las salvaguardas estándar: red más chica
-que los datos, \emph{weight decay} y validación sobre una crisis retenida. \emph{No} identifica el
-retardo. La red es flexible y ajusta los datos satisfaciendo la ODE para un rango ancho de $\mu$, así
-que el costo queda casi plano en $\mu$. La señal débil ($\sim$3\%) que debería anclarlo se
-\emph{absorbe} en la red. El inverso bayesiano de arriba ---6 parámetros directos, sin red--- deja
-que ese término débil informe $\mu$, y por eso \emph{sí} lo identifica. La lección es clara: con
-señal débil, la flexibilidad de la red destruye la identificabilidad que una calibración
-probabilística directa preserva.
+$\sim$24\% del co-movimiento contemporáneo, y de esa debilidad se siguen dos límites. El primero es
+que la \emph{dispersión} del retardo no se identifica: el perfil de verosimilitud en el ancho de la
+distribución es plano y dos núcleos muy distintos ajustan igual (Fig.~\ref{fig:model}, centro y
+der.), de modo que los datos no distinguen un retardo distribuido de uno puntual. El segundo es que
+el mecanismo no se separa con estas dos series: un $\mathrm{VAR}(p\!\ge\!4)$ lineal reproduce el
+mismo valle de la CCF y explica casi la misma varianza que nuestro modelo, así que el modelo de
+acumulación es una reparametrización
+interpretable de ese contenido lineal antes que un mecanismo separable de él ---en muestra. Fuera de
+muestra, en cambio, los dos \emph{no} son equivalentes: el modelo estructural ata el centro del
+núcleo $\mu$ a una cantidad medible aparte ---los tiempos de construcción y maduración sectoriales---,
+una predicción que un VAR en forma reducida no puede hacer; es ahí, y no en el ajuste, donde el
+mecanismo sería refutable. Y aun aceptando esa equivalencia en muestra, una
+caída de la ganancia tras la inversión es compatible tanto con sobreacumulación (capacidad que un
+mercado acotado no valida) como con un \emph{profit-squeeze} (la actividad eleva costos y comprime la
+participación). Distinguir el canal exigiría datos de ventas, inventarios y utilización, ausentes en
+este par de series.
 
 \section{Discusión y conclusiones}
 
 El cuadro sustantivo es consistente y honesto. \emph{Existe} un feedback negativo rezagado, \emph{consistente con} la sobreacumulación, con un
 retardo de acumulación de alrededor de un año. Es estructural antes que específico de las crisis, ya
 que el placebo encuentra el valle negativo con igual frecuencia fuera de ellas. Lo estimamos como un
-núcleo de retardo distribuido, convergente entre varios métodos clásicos y un inverso bayesiano. Lo que importa de ese feedback es su \emph{signo}, no su magnitud: un coeficiente consistentemente negativo es una presión de sobreacumulación persistente sobre la rentabilidad, débil en varianza pero estructural en su dirección. Dos
+núcleo de retardo distribuido, estimado con un inverso bayesiano y cotejado con la correlación cruzada. Lo que importa de ese feedback es su \emph{signo}, no su magnitud: un coeficiente consistentemente negativo es una presión de sobreacumulación persistente sobre la rentabilidad, débil en varianza pero estructural en su dirección. Dos
 límites acotan la afirmación. Primero, el contenido económico ---un feedback de sobreacumulación con
 las ganancias cediendo antes de las recesiones--- pertenece a la tradición previa (Astarita, 2012;
 Tapia, 2023); nuestro aporte es el modelo y el análisis de identificabilidad, no el fenómeno.
@@ -316,16 +292,14 @@ doce recesiones del NBER, descontando las extremas de 2008/2020 y los bordes de 
 muestra y una señal del $\sim$3\% de la varianza, los datos no pueden separar un retardo genuinamente
 distribuido de uno puntual, ni el mecanismo de acumulación de un VAR lineal de memoria larga.
 
-\textbf{Conclusión.} El feedback negativo rezagado ganancias--inversión, \emph{consistente con} la
-sobreacumulación, es \emph{real y significativo} ---el posterior bayesiano lo establece, con un IC95\% que no cruza cero---, con un
-retardo distribuido centrado en $\sim$1 año. La clave de identificabilidad es esta: la señal débil
-($\sim$3\%), con 312 trimestres, \emph{alcanza} para establecer el \emph{efecto} y su \emph{lag},
-pero \emph{no} para resolver lo fino. Ni su \emph{dispersión} (distribuido vs puntual) ni su
-\emph{separación de un VAR} se identifican, y la especificidad de crisis pide más que los $n=9$
-episodios disponibles. El resultado transferible es \emph{dónde} cae esa frontera: lo que la señal
-fija (el efecto) y lo que no (la dispersión). Cruzarla requiere datos nuevos, no más método.
+La clave de identificabilidad es esta: la señal débil ($\sim$3\%), con 312 trimestres, \emph{alcanza}
+para establecer el \emph{efecto} ---un coeficiente negativo, real por el IC95\% bayesiano que no cruza
+cero--- y su \emph{lag} de $\sim$1 año, pero \emph{no} para resolver lo fino: ni su \emph{dispersión}
+(distribuido vs puntual) ni su \emph{separación de un VAR} se identifican. El resultado transferible
+es \emph{dónde} cae esa frontera ---lo que la señal fija y lo que no---; cruzarla requiere datos
+nuevos, no más método.
 
-\textbf{Trabajo futuro.} La señal es genuinamente escasa: EE.UU.\ es prácticamente la única serie
+De cara al trabajo futuro, la señal es genuinamente escasa: EE.UU.\ es prácticamente la única serie
 larga y confiable, y sus crisis están espaciadas $\sim$una por década, de modo que acumular más
 historia rinde poco. Las vías realistas no pasan por más países sino por más resolución dentro del
 mismo sistema: tiempos de construcción sectoriales medidos que predigan el núcleo macro ---un test
@@ -342,6 +316,16 @@ identificabilidad de sus parámetros, no por su ajuste en-muestra; anticipamos q
 de la señal ($\sim$3\%) y los nueve episodios, la mejora podría no resultar identificable, el mismo
 límite que estructura este trabajo. Acoplar un ciclo generado por el retardo con una resolución de
 crisis no lineal es, hasta donde sabemos, un problema abierto.
+
+\section*{Apéndice: un inverso diferenciable (PINN) no mejora}
+Probamos también un inverso con red sustituta (PINN), con las salvaguardas
+estándar: red más chica que los datos, \emph{weight decay} y validación sobre una crisis retenida.
+\emph{No} identifica el retardo: la red es flexible y ajusta los datos satisfaciendo la ODE para un
+rango ancho de $\mu$, así que el costo queda casi plano en $\mu$ y la señal débil ($\sim$3\%) que
+debería anclarlo se \emph{absorbe} en la red. El inverso bayesiano del cuerpo principal ---seis
+parámetros directos, sin red--- deja que ese término débil informe $\mu$, y por eso \emph{sí} lo
+identifica: con señal débil, la flexibilidad de la red destruye la identificabilidad que una
+calibración probabilística directa preserva.
 
 \section*{Agradecimientos}
 El autor utilizó Claude (Anthropic) como asistente para redacción, figuras y código de los
@@ -363,7 +347,9 @@ código abierto (MIT/BSD).
 \setlength{\parskip}{4pt}
 \hangindent=1.5em\hangafter=1 Astarita, R. (2012). Crisis, sobrecapacidad y coyuntura. \emph{rolandoastarita.blog}, 22 de marzo de 2012. \url{https://rolandoastarita.blog/2012/03/22/crisis-sobrecapacidad-y-coyuntura/}\par
 \hangindent=1.5em\hangafter=1 Goldstein, J.P. (1999). Predator--prey model estimates of the cyclical profit squeeze. \emph{Metroeconomica} 50(2), 139--173.\par
-\hangindent=1.5em\hangafter=1 Raissi, M., Perdikaris, P., Karniadakis, G.E. (2019). Physics-informed neural networks. \emph{Journal of Computational Physics} 378, 686--707.\par
+\hangindent=1.5em\hangafter=1 Sapienza, F. (2026). \emph{Datos, Ecuaciones Diferenciales e Inteligencia Artificial} (apuntes de la materia, DM2026). \url{https://github.com/facusapienza21/DM2026-Curso}\par
+\hangindent=1.5em\hangafter=1 Smith, H. (2011). \emph{An Introduction to Delay Differential Equations with Applications to the Life Sciences}. Springer. \url{https://doi.org/10.1007/978-1-4419-7646-8}\par
+\hangindent=1.5em\hangafter=1 Strogatz, S.H. (2015). \emph{Nonlinear Dynamics and Chaos: With Applications to Physics, Biology, Chemistry, and Engineering}, 2.ª ed. Westview Press. ISBN 978-0-8133-4910-7.\par
 \hangindent=1.5em\hangafter=1 Tapia, J.A. (2023). \emph{Six Crises of the World Economy: Globalization and Economic Turbulence from the 1970s to the COVID-19 Pandemic}. Palgrave Macmillan. \url{https://doi.org/10.1007/978-3-031-38735-7}\par
 }
 
