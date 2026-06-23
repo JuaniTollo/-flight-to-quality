@@ -69,6 +69,7 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 │       ├── p8_event_study.py         #   superposed-epoch study around NBER recessions
 │       ├── p10_distlag.py            #   distributed-lag regression (delay ~4 quarters)
 │       ├── p11_physical_delay.py     #   physical maturation-chain model + identifiability
+│       ├── p11_pinn_maturation.jl    #   inverse PINN of the maturation model (note: does NOT identify the delay)
 │       ├── p12_*.py                  #   k regression, placebo, lag stability, VAR-Lyapunov, transform robustness
 │       └── p17_bayes_lag.jl          #   Bayesian inverse (Turing/NUTS): posterior over mu and k
 ├── julia/                            # Pinned Julia env (Project.toml + Manifest.toml)
@@ -128,7 +129,12 @@ uv run python -m src.experiment.p12_lag_stability        # leave-one-crisis-out
 uv run python -m src.experiment.p12_kernel_placebo       # placebo: the negative hump is not crisis-specific (p~0.35)
 uv run python -m src.experiment.p12_var_lyapunov         # VAR-Lyapunov observational-equivalence check
 uv run python -m src.experiment.p12_transform_robustness # QoQ vs YoY (Slutsky-Yule)
+julia --project=julia src/experiment/p11_pinn_maturation.jl  # method note: inverse PINN absorbs the weak signal, delay NOT identified
 ```
+
+The inverse-PINN note (`p11_pinn_maturation.jl`) backs the paper's remark that a
+differentiable surrogate does not identify the delay; the direct Bayesian inverse
+(`p17`) does.
 
 Figures are written to `output/experiment/` (gitignored, regenerable). The FRED
 snapshot in `data/` is versioned, so every experiment reproduces without
