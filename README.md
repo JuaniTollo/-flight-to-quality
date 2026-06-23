@@ -117,7 +117,7 @@ Delay estimate & overaccumulation effect:
 
 ```bash
 uv run python -m src.experiment.p10_distlag              # distributed-lag regression (~4 quarters)
-uv run python -m src.experiment.p12_overaccum_decomp     # overaccumulation regression (k, t-stats, circular-shift placebo)
+uv run python -m src.experiment.p12_overaccum_decomp     # derivative decomposition: marginal dR2 of matured investment (robustness)
 ```
 
 Identifiability controls & robustness:

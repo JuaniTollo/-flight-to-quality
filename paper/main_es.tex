@@ -47,7 +47,7 @@ ganancia posterior. El efecto y su retardo de $\sim$1 año \emph{sí} se identif
 ---no se deben a las crisis extremas (2008/2020) ni a la transformación de la serie---.
 El resultado central es de \emph{identificabilidad}: con una señal que explica apenas un 3\% de la
 varianza, el centro del retardo y el \emph{signo} del efecto se fijan, pero no su forma fina ni su separación de un
-$\mathrm{VAR}(p\!\ge\!4)$.
+$\mathrm{VAR}(p\!\ge\!4)$. Que el efecto sea débil en varianza no lo vuelve irrelevante: su dirección ---una presión de sobreacumulación sobre la ganancia--- es consistente y estructural.
 \end{abstract}
 
 \section{Introducción}
@@ -235,9 +235,7 @@ inversión contemporánea y la ganancia rezagada. El coeficiente es \emph{negati
 $k\approx-0{,}40$, robusto a $\mu\in[3;6]$, y el inverso bayesiano establece su significancia
 (IC95\% que no cruza cero, más abajo). \emph{Que sea negativo} es el punto sustantivo: más
 inversión acumulada $m$ \emph{deprime} la ganancia posterior ---la lectura de sobreacumulación,
-capital que al acumularse erosiona su propia rentabilidad---. No es overfitting (6 parámetros para
-312 datos) ni significancia espuria: un \emph{placebo} de 2000 desplazamientos circulares que rompen
-la relación deja al $k$ real en el percentil~0, a $3\sigma$ del azar.
+capital que al acumularse erosiona su propia rentabilidad---. No es overfitting: 6 parámetros para 312 datos.
 
 \paragraph{El inverso bayesiano identifica ambos con incertidumbre.}
 El inverso bayesiano (Turing.jl, NUTS) reestima $\mu$ y $k$ con sus \emph{posteriores}. El del
@@ -309,7 +307,7 @@ probabilística directa preserva.
 El cuadro sustantivo es consistente y honesto. \emph{Existe} un feedback negativo rezagado, \emph{consistente con} la sobreacumulación, con un
 retardo de acumulación de alrededor de un año. Es estructural antes que específico de las crisis, ya
 que el placebo encuentra el valle negativo con igual frecuencia fuera de ellas. Lo estimamos como un
-núcleo de retardo distribuido, convergente entre varios métodos clásicos y un inverso bayesiano. Dos
+núcleo de retardo distribuido, convergente entre varios métodos clásicos y un inverso bayesiano. Lo que importa de ese feedback es su \emph{signo}, no su magnitud: un coeficiente consistentemente negativo es una presión de sobreacumulación persistente sobre la rentabilidad, débil en varianza pero estructural en su dirección. Dos
 límites acotan la afirmación. Primero, el contenido económico ---un feedback de sobreacumulación con
 las ganancias cediendo antes de las recesiones--- pertenece a la tradición previa (Astarita, 2012;
 Tapia, 2023); nuestro aporte es el modelo y el análisis de identificabilidad, no el fenómeno.
