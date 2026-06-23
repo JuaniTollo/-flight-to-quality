@@ -139,7 +139,7 @@ $\mu$; pocas etapas lo dejan ancho y asimétrico.
 El sistema agregado es entonces
 \begin{equation}
 \begin{aligned}
-\frac{\mathrm{d}P}{\mathrm{d}t} &= c\,I - d\,P - k\,m,\\
+\frac{\mathrm{d}P}{\mathrm{d}t} &= c\,I - d\,P + k\,m,\\
 \frac{\mathrm{d}I}{\mathrm{d}t} &= a\,P - b\,I,\\
 m(t) &= \sum_j w_j(\mu)\,I(t-j),
 \end{aligned}
@@ -148,9 +148,9 @@ donde $P$ son las ganancias, $I$ la inversión y $m$ la \emph{inversión acumula
 ponderado de la inversión pasada cuyos pesos $w_j(\mu)$ son el núcleo Gamma, centrados en los
 $\sim\mu$ trimestres previos y normalizados a uno. Cada $w_j(\mu)$ es la fracción de la inversión de
 hace $j$ trimestres que \emph{recién ahora} termina de pesar sobre la rentabilidad. El parámetro
-$\mu$ es el \emph{retardo de acumulación}, lo que queremos estimar; el término $-k\,m$ es la
+$\mu$ es el \emph{retardo de acumulación}, lo que queremos estimar; el término $+k\,m$ (con $k<0$) es la
 sobreacumulación: la inversión que se acumuló hace $\sim\mu$ trimestres deprime las ganancias de hoy
-con intensidad $k$. A diferencia del oscilador de Lotka--Volterra clásico ---no lineal, donde el
+con intensidad $|k|$. A diferencia del oscilador de Lotka--Volterra clásico ---no lineal, donde el
 ciclo nace del \emph{producto} de las dos variables y el desfase queda fijado por construcción---,
 este sistema es \emph{lineal} y su oscilación proviene del \emph{retardo}: es el núcleo Gamma, y no
 una no linealidad, lo que genera el ciclo, y el desfase lo fijan los datos en lugar de la forma del
