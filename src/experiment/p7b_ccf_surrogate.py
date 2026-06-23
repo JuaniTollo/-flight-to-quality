@@ -154,7 +154,7 @@ def main():
                 fontsize=8.5, color="tab:red", ha="left",
                 arrowprops=dict(arrowstyle="->", color="tab:red", lw=1.3))
 
-    ax.set_xlabel("rezago k (trimestres)   ← inversión lidera   |   ganancias lideran →",
+    ax.set_xlabel("rezago h (trimestres)   ← inversión lidera   |   ganancias lideran →",
                   fontsize=10)
     ax.set_ylabel("corr(ganancias[t], inversión[t+k])", fontsize=10)
     ax.set_title("El valle de sobreacumulación (~1 año) es real:\n"
