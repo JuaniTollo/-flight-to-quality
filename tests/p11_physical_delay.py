@@ -127,10 +127,10 @@ def main():
 
     ax[1].plot([1/np.sqrt(s) for s in shapes], r2_sh, "o-")
     ax[1].set_title(f"Ancho NO se identifica\n(R² plano, rango={span:.3f})")
-    ax[1].set_xlabel("CV del kernel (←puntual | ancho→)"); ax[1].set_ylabel("R²")
+    ax[1].set_xlabel("ancho del núcleo (←puntual | ancho→)"); ax[1].set_ylabel("R²")
     ax[1].set_ylim(min(r2_sh) - 0.05, max(r2_sh) + 0.05)
 
-    for sh, lbl in [(64, "casi puntual (CV=0.12)"), (2, "ancho (CV=0.71)")]:
+    for sh, lbl in [(64, "casi puntual"), (2, "ancho")]:
         w = gkernel(4.0, sh)
         ax[2].plot(np.arange(len(w)), w, "o-", label=lbl, ms=4)
     ax[2].set_title("Dos kernels que ajustan IGUAL\n(indistinguibles con esta data)")

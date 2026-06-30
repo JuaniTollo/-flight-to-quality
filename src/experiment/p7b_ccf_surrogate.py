@@ -46,6 +46,8 @@ def ccf(p, i, kmax=KMAX):
     ks = np.arange(-kmax, kmax + 1)
     c = np.empty(len(ks))
     for m, k in enumerate(ks):
+        import pdb
+        pdb.set_trace()
         c[m] = np.corrcoef(p[:n - k], i[k:])[0, 1] if k >= 0 else np.corrcoef(p[-k:], i[:n + k])[0, 1]
     return ks, c
 
@@ -169,13 +171,13 @@ def main():
 
     fig.tight_layout()
     import shutil
-    out = C.OUTDIR / "p7b_ccf_surrogate"
-    fig.savefig(f"{out}.png", dpi=130)
-    fig.savefig(f"{out}.pdf")
-    plt.close(fig)
-    paper_pdf = C.ROOT / "paper" / "figures" / "p7b_ccf_surrogate.pdf"
-    shutil.copy(f"{out}.pdf", paper_pdf)
-    print(f"\n✓ figura: {out}.pdf  →  copiada a {paper_pdf}")
+    #out = C.OUTDIR / "p7b_ccf_surrogate"
+    #fig.savefig(f"{out}.png", dpi=130)
+    #fig.savefig(f"{out}.pdf")
+    #plt.close(fig)
+    #paper_pdf = C.ROOT / "paper" / "figures" / "p7b_ccf_surrogate.pdf"
+    #shutil.copy(f"{out}.pdf", paper_pdf)
+    #print(f"\n✓ figura: {out}.pdf  →  copiada a {paper_pdf}")
 
 
 if __name__ == "__main__":

@@ -76,7 +76,9 @@ function main(; n_samples=1000, seed=1)
     p2 = histogram(ks, bins=30, normalize=true, c=:darkorange, alpha=0.7, label="posterior k",
                    xlabel="k (coef. de sobreacumulación)", ylabel="densidad", title="¿Hay efecto de sobreacumulación?")
     vline!(p2, [0.0], c=:black, lw=2, ls=:dash, label="k=0")
-    fig = plot(p1, p2, layout=(1,2), size=(1100,440), plot_titlefontsize=11,
+    fig = plot(p1, p2, layout=(1,2), size=(1150,470), plot_titlefontsize=11,
+               guidefontsize=11, tickfontsize=9,
+               left_margin=7Plots.mm, bottom_margin=8Plots.mm,
                plot_title="Inverso bayesiano del retardo (Turing.jl / NUTS)")
     savefig(fig, joinpath(OUTDIR, "p17_bayes_lag.pdf")); savefig(fig, joinpath(OUTDIR, "p17_bayes_lag.png"))
     println("\n✓ figura: ", joinpath(OUTDIR, "p17_bayes_lag.png"))

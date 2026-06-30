@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defensa — Ciclo ganancias–inversión</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --muted:#5b6470; --accent:#b3261e; --accent2:#1e5fb3;
+    --bg:#fbfaf7; --card:#ffffff; --line:#e6e2da;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .deck{width:100vw; height:100vh; position:relative;}
+  .slide{
+    position:absolute; inset:0;
+    display:none; flex-direction:column;
+    padding:5vh 7vw; opacity:0;
+    transition:opacity .35s ease;
+  }
+  .slide.active{display:flex; opacity:1;}
+  .kicker{
+    font-size:.8rem; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:1.4rem; font-weight:600;
+  }
+  h1{font-size:clamp(1.6rem,4.2vw,3.2rem); line-height:1.18; font-weight:700; letter-spacing:-.01em;}
+  h2{font-size:clamp(1.3rem,2.8vw,2.1rem); line-height:1.2; font-weight:700; margin-bottom:1.2rem;}
+  .thesis{
+    font-size:clamp(1.5rem,3.6vw,2.8rem); line-height:1.35; font-weight:600;
+    max-width:18ch;
+  }
+  .thesis .hl{color:var(--accent);}
+  .sub{margin-top:2.2rem; color:var(--muted); font-size:1.05rem; max-width:46ch;}
+  .author{position:absolute; bottom:5vh; left:7vw; color:var(--muted); font-size:.95rem;}
+  .figwrap{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    min-height:0; margin-top:.5rem;
+  }
+  .figwrap img{max-width:100%; max-height:100%; object-fit:contain;
+    border:1px solid var(--line); border-radius:8px; background:#fff; padding:.6rem;}
+  .twocol{display:grid; grid-template-columns:1.15fr .85fr; gap:3vw; flex:1; min-height:0; align-items:center;}
+  .twocol .figwrap{margin-top:0;}
+  ul{list-style:none; display:flex; flex-direction:column; gap:1.1rem;}
+  li{position:relative; padding-left:1.6rem; font-size:clamp(1rem,1.5vw,1.25rem); line-height:1.4;}
+  li::before{content:""; position:absolute; left:0; top:.55em;
+    width:.6rem; height:.6rem; border-radius:50%; background:var(--accent);}
+  li.blue::before{background:var(--accent2);}
+  li b{font-weight:700;}
+  .note{margin-top:1.4rem; padding:1rem 1.2rem; background:#fff7f0;
+    border-left:4px solid var(--accent); border-radius:4px; font-size:1.02rem; line-height:1.45;}
+  .note.blue{background:#f0f5fc; border-left-color:var(--accent2);}
+  .formula{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:1.05rem;
+    background:#f4f1ea; padding:.5rem .8rem; border-radius:6px; display:inline-block; color:var(--ink);}
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:2.4vw; flex:1; min-height:0; align-items:stretch;}
+  .modelcard{background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:1.6rem 1.7rem; display:flex; flex-direction:column;}
+  .modelcard.bad{border-top:4px solid var(--muted);}
+  .modelcard.good{border-top:4px solid var(--accent2);}
+  .modelcard h3{font-size:1.15rem; margin-bottom:.3rem;}
+  .modelcard .tag{font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem;}
+  .eqs{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:1.02rem; line-height:1.9;
+    background:#f4f1ea; padding:.8rem 1rem; border-radius:8px; margin-bottom:1.1rem;}
+  .eqs .cmt{color:var(--muted);}
+  .modelcard ul{gap:.7rem; margin-top:auto;}
+  .modelcard li{font-size:1.02rem; padding-left:1.4rem;}
+  .verdict{margin-top:1rem; font-weight:700;}
+  .verdict.x{color:var(--accent);}
+  .verdict.ok{color:var(--accent2);}
+  .gridlists{display:grid; grid-template-columns:1fr 1fr; gap:3vw; flex:1; min-height:0; align-content:start; margin-top:.5rem;}
+  .gridlists h3{font-size:1.1rem; margin-bottom:1rem; color:var(--muted); letter-spacing:.04em;}
+  li.x::before{background:var(--accent);}
+  li.ok::before{background:var(--accent2);}
+  .big-eq{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:clamp(1.1rem,2vw,1.6rem);
+    background:#f4f1ea; padding:.7rem 1.1rem; border-radius:8px; display:inline-block; margin:.3rem 0;}
+  /* diagrama de las dos flechas (columna vertebral) */
+  .cycle{display:flex; align-items:center; justify-content:center; gap:clamp(1rem,3vw,3rem);
+    margin:2.5vh auto 0; max-width:80vw;}
+  .node{font-weight:700; font-size:clamp(1.1rem,1.8vw,1.5rem); letter-spacing:.02em;
+    padding:1.1rem 1.5rem; border:2px solid var(--ink); border-radius:14px; background:#fff; white-space:nowrap;}
+  .arrows{flex:1; display:flex; flex-direction:column; gap:clamp(1.6rem,4vh,3rem); min-width:34vw;}
+  .arrow.top{color:var(--accent2);}
+  .arrow.bot{color:var(--accent);}
+  .arrow .label{font-size:clamp(.95rem,1.3vw,1.15rem); font-weight:600; color:var(--ink);}
+  .arrow.bot .label b:last-child{color:var(--accent);}
+  .arrowline{position:relative; height:3px; background:currentColor; margin:.5rem 0;}
+  .arrowline.right::after{content:""; position:absolute; right:-2px; top:50%; transform:translateY(-50%);
+    border-left:15px solid currentColor; border-top:9px solid transparent; border-bottom:9px solid transparent;}
+  .arrowline.left::before{content:""; position:absolute; left:-2px; top:50%; transform:translateY(-50%);
+    border-right:15px solid currentColor; border-top:9px solid transparent; border-bottom:9px solid transparent;}
+  /* apéndice: anatomía de la ecuación */
+  .eqbig{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:clamp(1.1rem,2.1vw,1.7rem);
+    background:#f4f1ea; padding:1rem 1.3rem; border-radius:10px; line-height:2; text-align:center; margin:.4rem 0 1.4rem;}
+  .eqbig .pos{color:var(--accent2); font-weight:700;}
+  .eqbig .neg{color:var(--accent); font-weight:700;}
+  .eqbig .damp{color:var(--muted); font-weight:700;}
+  .coeftable{width:100%; border-collapse:collapse; font-size:clamp(.92rem,1.35vw,1.12rem);}
+  .coeftable td{padding:.5rem .7rem; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .coeftable .sym{font-family:monospace; font-weight:700; font-size:1.2em; width:2.2em;}
+  .sign{font-weight:700; padding:.06em .55em; border-radius:6px; font-size:.92em; white-space:nowrap;}
+  .sign.pos{background:#e7f0fb; color:var(--accent2);}
+  .sign.neg{background:#fbe9e7; color:var(--accent);}
+  .sign.damp{background:#ededed; color:var(--muted);}
+  .legend{display:flex; gap:1.6rem; flex-wrap:wrap; margin-top:1.2rem; font-size:.95rem; color:var(--muted);}
+  .legend span{display:flex; align-items:center; gap:.45rem;}
+  .dot{width:.7rem; height:.7rem; border-radius:50%;}
+  .dot.b{background:var(--accent2);} .dot.r{background:var(--accent);} .dot.g{background:#9a9a9a;}
+  /* nav */
+  .nav{position:fixed; bottom:2.2vh; right:2.5vw; display:flex; align-items:center; gap:.9rem;
+    color:var(--muted); font-size:.85rem; user-select:none; z-index:10;}
+  .nav button{border:1px solid var(--line); background:#fff; color:var(--ink);
+    width:34px; height:34px; border-radius:8px; cursor:pointer; font-size:1.1rem; line-height:1;}
+  .nav button:hover{background:var(--bg);}
+  .progress{position:fixed; top:0; left:0; height:3px; background:var(--accent); transition:width .35s;}
+  kbd{font-family:monospace; background:#eee; border:1px solid #ccc; border-bottom-width:2px;
+    border-radius:4px; padding:0 .35em; font-size:.8em;}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · Tesis en 12 palabras -->
+  <section class="slide active">
+    <div class="kicker">Tesis · una frase</div>
+    <p class="thesis">La inversión, al acumularse, <span class="hl">deprime las ganancias un año después</span>: sobreacumulación retardada.</p>
+    <p class="sub">El ciclo ganancias–inversión de EE.UU., 1948–2026. No el fenómeno —ya conocido— sino <b>el modelo y su identificabilidad</b>: qué fija una señal débil y qué no.</p>
+    <div class="author">Juan I. Tollo · Defensa de trabajo final</div>
+  </section>
+
+  <!-- 2 · La columna vertebral: dos flechas -->
+  <section class="slide">
+    <div class="kicker">La idea que hay que retener</div>
+    <h2>El ciclo tiene dos direcciones</h2>
+    <div class="cycle">
+      <div class="node">GANANCIAS</div>
+      <div class="arrows">
+        <div class="arrow top">
+          <div class="label">+ &nbsp;rápido · <b>acelerador</b> &nbsp;<span style="color:var(--muted)">(la ganancia tira de la inversión)</span></div>
+          <div class="arrowline right"></div>
+        </div>
+        <div class="arrow bot">
+          <div class="arrowline left"></div>
+          <div class="label">− &nbsp;lento, ~1 año · <b>sobreacumulación</b> &nbsp;<span style="color:var(--muted)">(la inversión deprime la ganancia)</span> — <b>esto estudio</b></div>
+        </div>
+      </div>
+      <div class="node">INVERSIÓN</div>
+    </div>
+    <div class="note" style="max-width:62ch; margin:3vh auto 0;">Toda la defensa distingue estas <b>dos flechas</b>. La de arriba es fuerte y se ve a ojo. La de abajo es débil y hay que <b>revelarla</b>. No confundirlas es la clave para seguir la historia.</div>
+  </section>
+
+  <!-- 3 · La serie -->
+  <section class="slide">
+    <div class="kicker">El dato crudo</div>
+    <h2>El ciclo, a la vista</h2>
+    <div class="figwrap"><img src="figures/p15_crisis_series-1.png" alt="Series de ganancias e inversión, EE.UU."></div>
+  </section>
+
+  <!-- 3 · Qué destacar de la serie -->
+  <section class="slide">
+    <div class="kicker">Qué mirar</div>
+    <div class="twocol">
+      <div class="figwrap"><img src="figures/p15_crisis_series-1.png" alt="Series"></div>
+      <div>
+        <ul>
+          <li>Las dos series <b>co-mueven fuerte y a la vez</b> (≈ +0,5).</li>
+          <li>Se <b>desploman juntas</b> en cada recesión (franjas grises = NBER).</li>
+          <li>La ganancia <b>adelanta</b> a la inversión ~1 trimestre: es el <b>acelerador</b> (ganancia → inversión, rápido).</li>
+          <li class="blue">Pero ese es el efecto rápido y dominante. El feedback que estudio es el <b>opuesto y más lento</b> —y <b>no se ve a ojo</b> acá.</li>
+        </ul>
+        <div class="note blue">La inversión deprime la ganancia ~1 año después (sobreacumulación). Para verlo hace falta otra herramienta: la correlación cruzada.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · La CCF -->
+  <section class="slide">
+    <div class="kicker">La herramienta</div>
+    <h2>Correlación cruzada: ¿cómo se alinean los momentos de la inversión?</h2>
+    <div class="figwrap"><img src="figures/p7b_ccf_surrogate-1.png" alt="Función de correlación cruzada"></div>
+  </section>
+
+  <!-- 5 · Explicación de la CCF -->
+  <section class="slide">
+    <div class="kicker">Qué estamos viendo</div>
+    <div class="twocol">
+      <div class="figwrap"><img src="figures/p7b_ccf_surrogate-1.png" alt="CCF"></div>
+      <div>
+        <p style="margin-bottom:1.1rem;"><span class="formula">ρ(h) = corr(ganancia<sub>t</sub>, inversión<sub>t+h</sub>)</span></p>
+        <ul>
+          <li>Pico en <b>h = 0</b> (≈ +0,5): co-movimiento contemporáneo, el <b>acelerador</b>.</li>
+          <li>Asimetría: +0,33 con la inversión del trimestre <b>siguiente</b> vs +0,07 con la del previo → la ganancia <b>adelanta</b>.</li>
+          <li class="blue"><b>Valle negativo en h = −4</b> (≈ −0,2): la inversión de hace <b>un año</b> se asocia con <b>menos</b> ganancia hoy → <b>sobreacumulación</b>.</li>
+        </ul>
+        <div class="note">La CCF <b>oscila en vez de decaer</b>: eso es un <b>ciclo</b>, no co-movimiento puro. Y el valle cae <b>fuera</b> de la banda nula (surrogates AR, <i>p</i> ≈ 0,006): el feedback es real, no un artefacto de autocorrelación.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Dos familias de modelos (LV vs nuestro) -->
+  <section class="slide">
+    <div class="kicker">¿Qué modelo produce esa CCF?</div>
+    <h2>Dos familias de modelos</h2>
+    <div class="compare">
+      <div class="modelcard bad">
+        <span class="tag">Osciladores de fase fija</span>
+        <h3>Lotka–Volterra</h3>
+        <div class="eqs">
+          dP/dt = α·P − β·P·I &nbsp;<span class="cmt">(presa = ganancias)</span><br>
+          dI/dt = δ·P·I − γ·I &nbsp;<span class="cmt">(depred. = inversión)</span>
+        </div>
+        <ul>
+          <li>El ciclo nace del <b>producto P·I</b> (no linealidad).</li>
+          <li>Desfase <b>fijo</b>: ¼ de ciclo, por construcción.</li>
+          <li>⇒ fuerza <b>ρ(0) = 0</b>.</li>
+        </ul>
+        <p class="verdict x">✗ Descartado: los datos dan ρ(0) ≈ +0,5</p>
+      </div>
+      <div class="modelcard good">
+        <span class="tag">Retardo distribuido</span>
+        <h3>Nuestro modelo (lineal)</h3>
+        <div class="eqs">
+          dP/dt = c·I − d·P <b>+ k·m</b><br>
+          dI/dt = a·P − b·I<br>
+          m(t) = Σ wⱼ(μ)·I(t−j) &nbsp;<span class="cmt">k&lt;0</span>
+        </div>
+        <ul>
+          <li><b>Lineal</b>: el ciclo nace del <b>retardo m</b>, no de una no linealidad.</li>
+          <li>El desfase lo <b>fijan los datos</b>, no la forma del modelo.</li>
+        </ul>
+        <p class="verdict ok">✓ Compatible con ρ(0) ≈ +0,5 y valle en −4</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · El modelo físico: cadena → Gamma -->
+  <section class="slide">
+    <div class="kicker">El modelo físico</div>
+    <h2>El retardo no es un número fijo</h2>
+    <ul style="max-width:62ch;">
+      <li>La inversión se construye, opera y agrega capacidad; recién cuando esa capacidad produce más de lo que el mercado absorbe presiona la rentabilidad → sus efectos llegan <b>repartidos en el tiempo</b>.</li>
+      <li>Lo modelo como una <b>cadena de N etapas</b>, cada una un suavizado exponencial: <span class="formula">dmⱼ/dt = (mⱼ₋₁ − mⱼ)/θ</span></li>
+      <li><b>Truco de la cadena lineal</b> (Smith 2011): convolucionar N exponenciales da <b>exactamente</b> un núcleo Gamma (Erlang).</li>
+    </ul>
+    <p class="big-eq">w(t) ∝ t<sup>N−1</sup> · e<sup>−t/θ</sup></p>
+    <div class="note blue" style="max-width:62ch;">Lectura probabilística: el tiempo total = suma de N demoras exponenciales ⇒ retardo típico <b>μ = N·θ</b>, dispersión <b>√N·θ</b>. El término <b>+k·m</b> (k&lt;0) es la sobreacumulación: la inversión madurada hace ~μ trimestres deprime la ganancia de hoy.</div>
+  </section>
+
+  <!-- 8 · Enfoque bayesiano -->
+  <section class="slide">
+    <div class="kicker">Estimación</div>
+    <div class="twocol">
+      <div class="figwrap"><img src="figures/p17_bayes_lag-1.png" alt="Posterior bayesiano de mu y k"></div>
+      <div>
+        <h2 style="margin-bottom:1rem;">Inverso bayesiano: μ y k con incertidumbre</h2>
+        <ul>
+          <li>En vez de un número, un <b>posterior</b> (Turing.jl / NUTS).</li>
+          <li><b>μ ≈ 4,9 trim.</b> [3,0; 7,3] — mucho más angosto que el prior ⇒ el dato <b>informa</b> μ.</li>
+          <li class="blue"><b>k ≈ −0,40</b>, IC95% [−0,63; −0,12] — <b>no cruza cero</b> ⇒ el efecto es real y negativo.</li>
+        </ul>
+        <div class="note">Converge con la <b>CCF</b> (que no supone el modelo) y con el R² del modelo físico: los tres apuntan a μ ≈ 5 trimestres (~1 año).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Frontera de identificabilidad -->
+  <section class="slide">
+    <div class="kicker">El resultado central</div>
+    <div class="twocol">
+      <div class="figwrap"><img src="figures/p11_physical_delay-1.png" alt="Frontera de identificabilidad"></div>
+      <div>
+        <h2 style="margin-bottom:1rem;">Qué fija la señal débil… y qué no</h2>
+        <ul>
+          <li class="ok"><b>✓ El centro</b> del retardo se identifica: pico nítido de R² en μ ≈ 5.</li>
+          <li class="x"><b>✗ El ancho</b> no: el ajuste es plano frente a la dispersión — un núcleo puntual y uno ancho ajustan <b>igual</b>.</li>
+          <li class="x"><b>✗ La separación de un VAR(p≥4)</b> tampoco: en muestra reproduce el mismo valle.</li>
+        </ul>
+        <div class="note">El feedback explica <b>~3%</b> de la varianza (vs ~24% del acelerador). La señal fija el <b>centro</b> y el <b>signo</b>; no la forma del retardo ni su separación del VAR.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Limitaciones y trabajo futuro -->
+  <section class="slide">
+    <div class="kicker">Honestidad sobre el alcance</div>
+    <h2>Limitaciones y trabajo futuro</h2>
+    <div class="gridlists">
+      <div>
+        <h3>Limitaciones</h3>
+        <ul>
+          <li class="x">Señal débil (~3%) y solo <b>~9 crisis</b> utilizables.</li>
+          <li class="x">No se distingue retardo <b>distribuido de puntual</b>.</li>
+          <li class="x">No se separa el mecanismo de un <b>VAR lineal</b> en muestra.</li>
+          <li class="x"><b>Sobreacumulación vs profit-squeeze</b>: indistinguibles sin datos de ventas, inventarios y utilización.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Trabajo futuro</h3>
+        <ul>
+          <li class="ok">No más países (EE.UU. ya es la mejor serie): más <b>resolución dentro del sistema</b>.</li>
+          <li class="ok">Tiempos de construcción <b>sectoriales</b> que predigan μ → un test que un VAR <b>no puede pasar</b>.</li>
+          <li class="ok">Crisis como <b>destrucción de capital</b>: mecanismo no lineal / cambio de régimen. Problema abierto.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Cierre -->
+  <section class="slide">
+    <div class="kicker">Para llevarse</div>
+    <h2>La frontera, no el ajuste</h2>
+    <ul style="max-width:64ch;">
+      <li>Existe un feedback negativo rezagado de <b>~1 año</b>, consistente con sobreacumulación. Importa su <b>signo, no su magnitud</b>: una presión estructural y persistente sobre la rentabilidad.</li>
+      <li class="blue">Bajo señal débil, recuperar un parámetro estructural es cuestión de <b>cómo se estima</b>: el bayesiano lo fija donde el <b>PINN lo disuelve</b> y un VAR no lo separa.</li>
+      <li>Lo transferible es <b>dónde cae la frontera de identificabilidad</b>. Cruzarla pide <b>datos nuevos, no más método</b>.</li>
+    </ul>
+  </section>
+
+  <!-- Apéndice · anatomía de la ecuación -->
+  <section class="slide">
+    <div class="kicker">Apéndice · qué dice cada término</div>
+    <h2>El sentido de la ecuación</h2>
+    <div class="eqbig">
+      dP/dt = <span class="pos">c·I</span> <span class="damp">− d·P</span> <span class="neg">+ k·m</span><br>
+      dI/dt = <span class="pos">a·P</span> <span class="damp">− b·I</span> &nbsp;&nbsp;&nbsp; m(t) = Σ wⱼ(μ)·I(t−j)
+    </div>
+    <table class="coeftable">
+      <tr><td class="sym">a</td><td><span class="sign pos">&gt; 0</span></td><td>ganancia → inversión: el <b>acelerador</b></td></tr>
+      <tr><td class="sym">c</td><td><span class="sign pos">&gt; 0</span></td><td>inversión → ganancia <i>contemporánea</i> (Kalecki: el gasto de inversión genera ganancia hoy)</td></tr>
+      <tr><td class="sym">k</td><td><span class="sign neg">&lt; 0</span></td><td><b>sobreacumulación</b>: la inversión madurada hace ~μ trim. deprime la ganancia</td></tr>
+      <tr><td class="sym">b</td><td><span class="sign damp">&gt; 0</span></td><td>amortiguación de la inversión</td></tr>
+      <tr><td class="sym">d</td><td><span class="sign damp">&gt; 0</span></td><td>amortiguación de la ganancia &nbsp;<span style="color:var(--muted)">(b, d &gt; 0 → el sistema es estacionario, no explota)</span></td></tr>
+    </table>
+    <div class="legend">
+      <span><span class="dot b"></span>lazo rápido + → co-movimiento ρ(0)≈+0,5 (flecha de arriba)</span>
+      <span><span class="dot r"></span>feedback lento − → valle en −4 (flecha de abajo)</span>
+      <span><span class="dot g"></span>amortiguación → estabilidad</span>
+    </div>
+    <div class="note" style="margin-top:1.2rem; max-width:70ch;">Los signos <b>no son libres</b>: son las dos flechas del ciclo escritas en ecuaciones. <b>a</b> y <b>c</b> quedan bien fijados por la señal contemporánea fuerte (~24% de varianza); el canal difícil es el débil, donde la señal alcanza para <b>μ y el signo de k</b>, no para lo fino.</div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="anterior">‹</button>
+  <span id="counter">1 / 5</span>
+  <button id="next" aria-label="siguiente">›</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  function show(n){
+    i = Math.max(0, Math.min(slides.length-1, n));
+    slides.forEach((s,k)=>s.classList.toggle('active', k===i));
+    document.getElementById('counter').textContent = (i+1)+' / '+slides.length;
+    document.getElementById('progress').style.width = ((i+1)/slides.length*100)+'%';
+  }
+  document.getElementById('next').onclick = ()=>show(i+1);
+  document.getElementById('prev').onclick = ()=>show(i-1);
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') show(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp') show(i-1);
+    if(e.key==='Home') show(0);
+    if(e.key==='End') show(slides.length-1);
+  });
+  document.getElementById('deck').addEventListener('click', e=>{
+    if(e.target.closest('.nav')) return;
+    if(e.clientX > window.innerWidth*0.5) show(i+1); else show(i-1);
+  });
+  show(0);
+</script>
+</body>
+</html>
