@@ -48,13 +48,13 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 …plus the companion datasets used for the Tapia replication figures
 (`A446RC1Q027SBEA`, `A448RC1Q027SBEA`, `NYGDPPCAPKDWLD`, `GDPC1`, `GPDIC1`,
 `CBIC1`). All declared in
-[`configs/benchmarks/finance.yaml`](configs/benchmarks/finance.yaml).
+[`configs/datasets.yaml`](configs/datasets.yaml).
 
 ## Repository layout
 
 ```
 .
-├── configs/benchmarks/finance.yaml   # FRED tickers, dates, save paths
+├── configs/datasets.yaml   # FRED tickers, dates, save paths
 ├── src/
 │   ├── etl/                          # Extract / Transform / Load (see src/etl/README.md)
 │   │   ├── paths.py                  #   repo-rooted path helpers

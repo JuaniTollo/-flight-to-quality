@@ -13,7 +13,7 @@ def synthetic_data_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Build a fake `data/raw/` tree with realistic schemas for each dataset.
 
     The shapes match what `pandas-datareader` returns for the FRED tickers
-    declared in `configs/benchmarks/finance.yaml`, so the processor transforms
+    declared in `configs/datasets.yaml`, so the processor transforms
     can run on it end-to-end.
     """
     root = tmp_path_factory.mktemp("repo")
@@ -70,7 +70,7 @@ def synthetic_data_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
 @pytest.fixture(scope="session")
 def synthetic_config_path(synthetic_data_root: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
     """A YAML config pointing save_paths to the synthetic raw directory."""
-    cfg_dir = synthetic_data_root / "configs" / "benchmarks"
+    cfg_dir = synthetic_data_root / "configs"
     cfg_dir.mkdir(parents=True)
     yaml_text = f"""\
 datasets:
@@ -110,6 +110,6 @@ datasets:
       INVESTMENT: "GPDI"
       RECESSION: "USREC"
 """
-    cfg = cfg_dir / "finance.yaml"
+    cfg = cfg_dir / "datasets.yaml"
     cfg.write_text(yaml_text)
     return cfg

@@ -112,7 +112,7 @@ EXPECTED_PROCESSED_COLUMNS = {
 def test_processor_produces_expected_processed_csvs(synthetic_config_path: Path) -> None:
     DataProcessor(synthetic_config_path).run()
 
-    repo_root = synthetic_config_path.parents[2]
+    repo_root = synthetic_config_path.parents[1]
     for name, expected_cols in EXPECTED_PROCESSED_COLUMNS.items():
         out = repo_root / "data" / "processed" / f"{name}.csv"
         assert out.exists(), f"{name}: processed CSV not written"
@@ -124,7 +124,7 @@ def test_processor_produces_expected_processed_csvs(synthetic_config_path: Path)
 
 def test_processed_lotka_volterra_has_no_nan_in_features(synthetic_config_path: Path) -> None:
     DataProcessor(synthetic_config_path).run()
-    repo_root = synthetic_config_path.parents[2]
+    repo_root = synthetic_config_path.parents[1]
     df = pd.read_csv(repo_root / "data" / "processed" / "lotka_volterra.csv", index_col=0, parse_dates=True)
     for col in ("PROFITS_YOY", "INVEST_YOY", "P_z", "I_z"):
         assert df[col].notna().all(), f"{col} has NaN"
@@ -132,7 +132,7 @@ def test_processed_lotka_volterra_has_no_nan_in_features(synthetic_config_path: 
 
 def test_processed_zscore_invariants(synthetic_config_path: Path) -> None:
     DataProcessor(synthetic_config_path).run()
-    repo_root = synthetic_config_path.parents[2]
+    repo_root = synthetic_config_path.parents[1]
     df = pd.read_csv(repo_root / "data" / "processed" / "lotka_volterra.csv", index_col=0, parse_dates=True)
     assert abs(df["P_z"].mean()) < 1e-6
     assert abs(df["I_z"].mean()) < 1e-6
@@ -142,7 +142,7 @@ def test_processed_zscore_invariants(synthetic_config_path: Path) -> None:
 
 def test_processed_date_coverage(synthetic_config_path: Path) -> None:
     DataProcessor(synthetic_config_path).run()
-    repo_root = synthetic_config_path.parents[2]
+    repo_root = synthetic_config_path.parents[1]
     df = pd.read_csv(repo_root / "data" / "processed" / "lotka_volterra.csv", index_col=0, parse_dates=True)
     # config starts 1947-01-01 but YoY drops the first 4 quarters → first row in 1948
     assert df.index.min().year == 1948

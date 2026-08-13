@@ -16,7 +16,7 @@ src/etl/
 
 ## Configuration
 
-All datasets are declared in [`configs/benchmarks/finance.yaml`](../../configs/benchmarks/finance.yaml).
+All datasets are declared in [`configs/datasets.yaml`](../../configs/datasets.yaml).
 Each entry specifies:
 
 | field         | meaning                                         |
@@ -71,6 +71,6 @@ uv run pytest
 
 ## Adding a new dataset
 
-1. Append an entry to `configs/benchmarks/finance.yaml`.
+1. Append an entry to `configs/datasets.yaml`.
 2. Add a `transform_<name>` function to `processor.py`, register it in `TRANSFORMS`.
 3. Add a row to `tests/test_etl.py` describing expected columns and invariants.
