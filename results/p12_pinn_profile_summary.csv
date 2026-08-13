@@ -1,4 +1,0 @@
-caso,lag_trim,lag_anios,ic_lo_trim,ic_hi_trim,k,note
-sintetico_verdadero,4.000,1.000,,,,lag conocido
-sintetico_perfil,6.000,1.500,5.580,6.000,,minimo del perfil
-real_perfil,2.000,0.500,2.000,6.000,0.6439,QoQ ventana 1990-

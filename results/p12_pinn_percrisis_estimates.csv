@@ -1,4 +1,0 @@
-caso,n_crisis,lag_trim,lag_anios,a,b,c,d,k,r2
-sintetico_verdadero,,4.000,1.000,,,,,,
-sintetico_recuperado,,1.640,0.410,,,,,,
-real,9,0.841,0.210,1.4156,2.2569,-0.4863,-0.6490,1.3123,0.856
