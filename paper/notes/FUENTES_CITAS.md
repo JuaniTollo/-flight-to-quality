@@ -50,7 +50,8 @@ el esquema causal endógeno y el modelo predador-presa que enmarca nuestro traba
 - Que esa segunda dirección es la **más débil** (significativa en datos anuales, no en
   trimestrales). Esto coincide con nuestro propio EDA (β_m≈+0,02, t≈0,15, no signif.).
 - El encuadre **predador-presa** con ganancias=presa, inversión=predador es de **Tapia
-  (2023)**, no de Goodwin. Documentado además en `report/README.md`.
+  (2023)**, no de Goodwin. Documentado además en el EDA histórico
+  (`git show 16d7397:report/README.md`).
 
 **Aparece en main_es.tex:** L52–59 (intro "La hipótesis económica"), L228 (Discusión).
 
@@ -100,7 +101,7 @@ citan para no atribuir contenido sin verificar.
 
 **Aparece en main_es.tex:** L57 (intro, atribución de la sobreacumulación), L228 (Discusión).
 
-**Nota sobre el EDA:** `report/README.md` (L8, L168) atribuye la fase de sobreacumulación a
+**Nota sobre el EDA:** el EDA histórico (`git show 16d7397:report/README.md`, L8, L168) atribuye la fase de sobreacumulación a
 "Tapia draws from Astarita (Tapia 2023, p. 132)". La p. 132 del libro (nota 33) solo dice que
 Astarita influyó en la lectura **general de Marx** de Tapia, no en el modelo predador-presa.
 La atribución correcta del **mecanismo** de sobreacumulación es a obra propia de Astarita

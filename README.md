@@ -73,9 +73,8 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 │       ├── p12_*.py                  #   k regression, placebo, lag stability, VAR-Lyapunov, transform robustness
 │       └── p17_bayes_lag.jl          #   Bayesian inverse (Turing/NUTS): posterior over mu and k
 ├── julia/                            # Pinned Julia env (Project.toml + Manifest.toml)
-├── notes/FUENTES_CITAS.md            # Citation provenance for the paper
-├── paper/                    # main_es.tex + compiled PDF
-├── report/                           # Committed: EDA write-up + plots
+├── paper/                            # main_es.tex, figures, defense material, notes
+│   └── notes/FUENTES_CITAS.md        #   citation provenance for the paper
 ├── results/                          # Committed numeric artefacts
 ├── data/                             # Versioned raw & processed CSVs (FRED snapshot)
 ├── tests/                            # pytest data-validation tests
@@ -92,7 +91,7 @@ uv run pytest                             # data-validation tests, no FRED calls
 uv run python -m src.etl.pipeline         # download + transform (skips cached files)
 uv run python -m src.etl.pipeline --force # force re-download
 
-uv run python -m src.eda.run_all          # regenerate report/plots/*.png
+uv run python -m src.eda.run_all          # regenerate EDA plots (report/plots/, not versioned)
 ```
 
 ## Run the paper's experiments
@@ -142,13 +141,9 @@ re-downloading.
 
 ## Read the EDA
 
-The narrative analysis with embedded plots lives in
-**[`report/README.md`](report/README.md)**. It walks through:
-
-1. Tapia replication figures (corporate profits, world growth, capital cycle)
-2. Time-series view: profits leading investment, with per-cycle zooms
-3. Cross-correlation: lead-lag at the aggregate and by NBER phase
-4. Phase space: z-score normalization, full orbit, per-cycle small-multiples
+The narrative EDA write-up (Tapia replication, lead-lag, phase space) was
+retired from the working tree; it remains in git history:
+`git show 16d7397:report/README.md`.
 
 ## Tests
 

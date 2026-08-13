@@ -15,6 +15,7 @@ wheels/
 # Artefactos regenerables. Los datos procesados/raw SÍ se versionan
 # (snapshot chico para reproducir exacto; FRED puede revisar series).
 output/
+report/
 *.pt
 
 # Test caches
