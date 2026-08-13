@@ -24,7 +24,7 @@ output/
 *.pdf
 funding/
 third_parties/
-bibliography/
+paper/bibliography/
 .claude/settings.local.json
 contexto_repo_limpio.txt
 
@@ -32,9 +32,12 @@ contexto_repo_limpio.txt
 .claude/*.lock
 
 # LaTeX build artifacts
-trabajo_final/*.aux
-trabajo_final/*.log
-trabajo_final/*.out
+paper/*.aux
+paper/*.log
+paper/*.out
+
+# Material privado (no publicable)
+**/private/
 
 # Resultados regenerables
 results/*.csv

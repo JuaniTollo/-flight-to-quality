@@ -2,7 +2,7 @@
 
 Última actualización: 2026-06-14.
 
-Este archivo documenta, para cada cita del paper (`trabajo_final/main_es.tex`), **qué se
+Este archivo documenta, para cada cita del paper (`paper/main_es.tex`), **qué se
 verificó, cómo y con qué evidencia**. La regla aplicada: si una afirmación teórica no
 se pudo cotejar contra la fuente, **se sacó del texto** (no se deja "decorando").
 

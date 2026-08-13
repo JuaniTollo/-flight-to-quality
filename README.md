@@ -14,7 +14,7 @@ delay distribution is not estimable with this data (n≈9 crises, SNR≈3%).
 
 This repository holds exactly what backs the paper:
 
-- The write-up: [`trabajo_final/main_es.tex`](trabajo_final/main_es.tex) (compiled `trabajo_final/main_es.pdf`).
+- The write-up: [`paper/main_es.tex`](paper/main_es.tex) (compiled `paper/main_es.pdf`).
 - Citation provenance for every claim in the paper: [`notes/FUENTES_CITAS.md`](notes/FUENTES_CITAS.md).
 
 ## Theoretical setup
@@ -74,7 +74,7 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 │       └── p17_bayes_lag.jl          #   Bayesian inverse (Turing/NUTS): posterior over mu and k
 ├── julia/                            # Pinned Julia env (Project.toml + Manifest.toml)
 ├── notes/FUENTES_CITAS.md            # Citation provenance for the paper
-├── trabajo_final/                    # main_es.tex + compiled PDF
+├── paper/                    # main_es.tex + compiled PDF
 ├── report/                           # Committed: EDA write-up + plots
 ├── results/                          # Committed numeric artefacts
 ├── data/                             # Versioned raw & processed CSVs (FRED snapshot)
