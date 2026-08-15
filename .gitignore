@@ -36,9 +36,10 @@ contexto_repo_limpio.txt
 .vscode/
 
 # LaTeX build artifacts
-paper/*.aux
-paper/*.log
-paper/*.out
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+texput.log
 
 # Material privado (no publicable)
 **/private/
