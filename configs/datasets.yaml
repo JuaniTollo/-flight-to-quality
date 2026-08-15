@@ -39,6 +39,6 @@ datasets:
     frequency: "QE"
     save_path: "data/raw/lotka_volterra.csv"
     indicators:
-      PROFITS: "A053RC1Q027SBEA"   # Corporate Profits w/ IVA & CCAdj (NIPA)
+      PROFITS: "A053RC1Q027SBEA"   # Corporate Profits before tax, without IVA & CCAdj (NIPA)
       INVESTMENT: "GPDI"           # Gross Private Domestic Investment
       RECESSION: "USREC"
