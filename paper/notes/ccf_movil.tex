@@ -1,0 +1,174 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[margin=2.6cm]{geometry}
+
+\title{El valle de la CCF en $h=-4$ vive en las crisis}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-3em}
+
+\section{La correlaci\'on cruzada}
+
+Con las tasas de variaci\'on log trimestrales
+$p_t = 100\,[\ln P_t - \ln P_{t-1}]$ (ganancias) e
+$i_t = 100\,[\ln I_t - \ln I_{t-1}]$ (inversi\'on)\footnote{$P_t$ e $I_t$ en
+d\'olares corrientes. El c\'alculo rehecho con series deflactadas da el mismo
+valle ($\rho(-4)=-0{,}233$ vs $-0{,}230$ nominal). Adem\'as, un componente
+inflacionario com\'un a ambas series empuja los productos de desv\'ios hacia
+\emph{positivo} (en d\'ecadas de inflaci\'on alta las dos variaciones nominales
+quedan por encima de sus medias a la vez, y en d\'ecadas de inflaci\'on baja,
+por debajo a la vez), de modo que trabajar en nominales juega en contra del
+valle negativo, no a favor. Como tercera verificaci\'on, recalculando las
+contribuciones contra una media m\'ovil de 10 a\~nos (que elimina cualquier
+deriva inflacionaria lenta) el reparto es el mismo: 88\,\% de la covarianza
+negativa en las vecindades de crisis, contra 87\,\% con la media global.}, la funci\'on de
+correlaci\'on cruzada es
+\[
+\rho(h) = \operatorname{corr}\bigl(p_t,\, i_{t+h}\bigr).
+\]
+En $h=-4$ el par es \emph{(ganancia de hoy, inversi\'on de hace cuatro
+trimestres)}.
+
+Numeramos los trimestres de la muestra $t = 1, 2, \dots, 312$, donde $t=1$ es
+1948Q2 y $t=312$ es 2026Q1. El par $(p_t,\, i_{t-4})$ solo puede formarse
+cuando $t-4 \geq 1$, es decir para $t = 5, 6, \dots, 312$: los primeros cuatro
+trimestres no tienen con qui\'en emparejarse y quedan $312-4=308$ pares.
+$\rho(-4)$ es la correlaci\'on de Pearson com\'un sobre esos 308 pares:
+\begin{equation}
+\rho(-4)
+= \frac{\displaystyle\sum_{t=5}^{312} \bigl(p_t - \bar p\bigr)\bigl(i_{t-4} - \bar\imath\bigr)}
+       {\sqrt{\displaystyle\sum_{t=5}^{312} \bigl(p_t - \bar p\bigr)^2}\;
+        \sqrt{\displaystyle\sum_{t=5}^{312} \bigl(i_{t-4} - \bar\imath\bigr)^2}}
+\label{eq:ccf}
+\end{equation}
+con $\bar p$ el promedio de los $p_t$ usados ($t = 5,\dots,312$) y
+$\bar\imath$ el de los $i_{t-4}$ usados ($t-4 = 1,\dots,308$).
+
+El numerador no suma tasas: suma \emph{productos de desv\'ios}, un ``voto'' con
+signo por trimestre --- negativo cuando inversi\'on alta precede ganancia baja
+(o viceversa), positivo cuando ambas se desv\'ian para el mismo lado. El
+denominador normaliza para que el cociente quede en $[-1,1]$. Sobre los 308
+pares, $\rho(-4) = -0{,}23$.
+
+\section{El experimento: ¿d\'onde se genera el $-0{,}23$?}
+
+Cada trimestre tiene su \emph{contribuci\'on} $c_j$ --- un punto de la l\'inea
+roja de la figura~\ref{fig:contrib} --- y la CCF es el promedio de las 308
+contribuciones. La cuenta para un trimestre gen\'erico $j$ (con
+$5 \leq j \leq 312$) es:
+\begin{enumerate}
+\item Tomar la tasa de variaci\'on de la ganancia del trimestre $j$: $p_j$.
+\item Estandarizarla con la media y el desv\'io de \emph{toda} la serie de
+variaciones de la ganancia, calculados una sola vez sobre los 312 trimestres:
+$z^p_j = (p_j - \bar p)/s_p$.
+\item Tomar la tasa de variaci\'on de la inversi\'on de cuatro trimestres
+antes: $i_{j-4}$.
+\item Estandarizarla con la media y el desv\'io de \emph{toda} la serie de
+variaciones de la inversi\'on: $z^i_{j-4} = (i_{j-4} - \bar\imath)/s_i$.
+\item Multiplicar:
+\[
+c_j = z^p_j \cdot z^i_{j-4}.
+\]
+\end{enumerate}
+El signo de $c_j$ es el ``voto'' del trimestre: negativo si la inversi\'on
+estaba por encima de su media y la ganancia cuatro trimestres despu\'es qued\'o
+por debajo (o viceversa); positivo si ambas se desviaron para el mismo lado.
+
+En s\'imbolos, la cuenta completa para un $j$ gen\'erico es
+\[
+z^p_j = \frac{p_j - \bar p}{s_p},
+\qquad
+z^i_{j-4} = \frac{i_{j-4} - \bar\imath}{s_i},
+\qquad
+c_j = z^p_j \cdot z^i_{j-4},
+\]
+donde el promedio y el desv\'io est\'andar de cada serie se calculan una sola
+vez, sobre los 312 trimestres de la muestra:
+\[
+\bar p = \frac{1}{312}\sum_{t=1}^{312} p_t,
+\qquad
+s_p = \sqrt{\frac{1}{312}\sum_{t=1}^{312} \bigl(p_t - \bar p\bigr)^2},
+\]
+\[
+\bar\imath = \frac{1}{312}\sum_{t=1}^{312} i_t,
+\qquad
+s_i = \sqrt{\frac{1}{312}\sum_{t=1}^{312} \bigl(i_t - \bar\imath\bigr)^2}.
+\]
+Ejemplo con $j = 100$, que es 1973Q1 (y $j-4 = 96$ es 1972Q1): es la misma
+cuenta con los n\'umeros puestos,
+\[
+z^p_{100} = \frac{p_{100} - \bar p}{s_p} = \frac{11{,}21 - 1{,}55}{6{,}86} = +1{,}41,
+\qquad
+z^i_{96} = \frac{i_{96} - \bar\imath}{s_i} = \frac{7{,}08 - 1{,}53}{4{,}84} = +1{,}15,
+\]
+\[
+c_{100} = z^p_{100} \cdot z^i_{96} = 1{,}41 \times 1{,}15 = +1{,}62 :
+\]
+pleno boom previo a la crisis de 1975, ganancia e inversi\'on rezagada ambas
+por encima de sus medias, voto positivo. En un trimestre de crisis pasa lo
+contrario: la inversi\'on de $j-4$ (fin de la expansi\'on) est\'a por encima de
+su media y la ganancia de $j$ por debajo, y el producto sale negativo.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{fig_ccf_movil.pdf}
+\caption{Arriba: las tasas $p_t$ e $i_t$; el sombreado marca las recesiones
+NBER. Abajo: la contribuci\'on $c_j$ de cada trimestre, coloreada seg\'un el
+caso. En gris las positivas (ambas variaciones del mismo lado de su media). En
+rojo las negativas de \emph{sobreacumulaci\'on}: inversi\'on por encima de su
+media cuatro trimestres antes, ganancia por debajo hoy. En violeta las
+negativas de \emph{recuperaci\'on}: inversi\'on derrumbada cuatro trimestres
+antes, ganancia rebotando hoy (como 1950 o 2021). Las rojas se apilan entrando
+a las crisis y las violetas saliendo: son las dos mitades del mismo ciclo
+presa--depredador, vistas con medio ciclo de distancia.}
+\label{fig:contrib}
+\end{figure}
+
+Repitiendo la cuenta para los 308 trimestres y promediando se recupera la CCF:
+\[
+\rho(-4) = \frac{1}{308}\sum_{j=5}^{312} c_j = -0{,}224 \approx -0{,}23
+\]
+(la peque\~na diferencia con \eqref{eq:ccf} es que all\'i las medias se
+calculan sobre los 308 pares y aqu\'i sobre los 312 trimestres; num\'ericamente
+despreciable). El experimento consiste en separar los 308 votos en dos urnas
+antes de sumar:
+\begin{enumerate}
+\item Para cada una de las 12 recesiones NBER se ubica su \emph{fondo}: el
+trimestre con la tasa de inversi\'on m\'as baja dentro de la ventana que va del
+pico NBER menos 2 trimestres al valle NBER m\'as 4. Los fondos resultantes son
+1949Q2, 1953Q4, 1957Q4, 1960Q4, 1970Q4, 1975Q1, 1980Q2, 1982Q1, 1990Q4,
+2001Q4, 2009Q1 y 2020Q2.
+\item Se marca como ``vecindad de crisis'' todo trimestre a distancia de a lo
+sumo 6 del fondo m\'as cercano (hasta 13 trimestres por crisis; las ventanas de
+1958--1961 y de 1980--1982 se solapan y cada trimestre se cuenta una sola vez).
+De los 308 trimestres con par, quedan marcados 143.
+\item Se suman los $c_j$ de los trimestres marcados por un lado y los del resto
+por el otro.
+\end{enumerate}
+El reparto es:
+\[
+\underbrace{\sum_{j=5}^{312} c_j = -69}_{\text{los 308 trimestres}}
+\;=\;
+\underbrace{-60}_{\substack{\text{vecindades de crisis}\\ 143 \text{ trim}}}
+\;+\;
+\underbrace{-9}_{\substack{\text{resto de la muestra}\\ 165 \text{ trim}}}
+\]
+El 87\% de la covarianza negativa se genera en las vecindades de las crisis.
+El mismo resultado en t\'erminos de correlaci\'on por r\'egimen: aplicando
+\eqref{eq:ccf} solo a los pares cuyos dos trimestres ($t$ y $t-4$) caen dentro
+de un mismo bloque de vecindad, $\rho(-4)=-0{,}28$ ($-0{,}38$ excluyendo 2008 y
+2020); con los pares enteramente fuera de las vecindades, $0{,}00$.
+
+\noindent\emph{Salvedad.} La correlaci\'on no discrimina mecanismos por s\'i
+sola; ese trabajo lo hacen los controles (la regresi\'on que condiciona por la
+historia propia de la ganancia y el contraste con series sustitutas sin
+acople).
+
+\end{document}
