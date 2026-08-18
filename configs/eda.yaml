@@ -1,3 +1,5 @@
+# Datos auxiliares del EDA (src/eda/eda_00_tapia_figures.py): réplicas de las
+# figuras de Tapia. NO entran en ninguna estimación del paper; ver configs/paper.yaml.
 datasets:
   # 1. PROFITS (Fig 2.12)
   corporate_profits:
@@ -30,15 +32,4 @@ datasets:
       REAL_GDP: "GDPC1"
       REAL_INVESTMENT: "GPDIC1"
       REAL_INVENTORY_CHANGE: "CBIC1"
-      RECESSION: "USREC"
-
-  # 4. LOTKA-VOLTERRA: Profits (Prey) vs Investment (Predator)
-  lotka_volterra:
-    source: "fred"
-    start_date: "1947-01-01"
-    frequency: "QE"
-    save_path: "data/raw/lotka_volterra.csv"
-    indicators:
-      PROFITS: "A053RC1Q027SBEA"   # Corporate Profits before tax, without IVA & CCAdj (NIPA)
-      INVESTMENT: "GPDI"           # Gross Private Domestic Investment
       RECESSION: "USREC"

@@ -45,16 +45,22 @@ All series are pulled from [FRED](https://fred.stlouisfed.org/) by
 | Investment (pred.)| `GPDI`                | Gross private domestic investment (quarterly, billions $) |
 | Recession band    | `USREC`               | NBER recession indicator                                   |
 
-…plus the companion datasets used for the Tapia replication figures
+These three series are declared in [`configs/paper.yaml`](configs/paper.yaml)
+and are the **only** data behind the paper's estimates (every script under
+`src/experiment/` reads `data/processed/lotka_volterra.csv`).
+
+The companion datasets used for the Tapia replication figures in the EDA
 (`A446RC1Q027SBEA`, `A448RC1Q027SBEA`, `NYGDPPCAPKDWLD`, `GDPC1`, `GPDIC1`,
-`CBIC1`). All declared in
-[`configs/datasets.yaml`](configs/datasets.yaml).
+`CBIC1`) live separately in [`configs/eda.yaml`](configs/eda.yaml) and are not
+used by any estimation.
 
 ## Repository layout
 
 ```
 .
-├── configs/datasets.yaml   # FRED tickers, dates, save paths
+├── configs/                 # FRED tickers, dates, save paths
+│   ├── paper.yaml          #   data behind the estimates (src/experiment)
+│   └── eda.yaml            #   Tapia replication figures only (src/eda)
 ├── src/
 │   ├── etl/                          # Extract / Transform / Load (see src/etl/README.md)
 │   │   ├── paths.py                  #   repo-rooted path helpers
@@ -88,7 +94,8 @@ uv sync                                   # install deps
 
 uv run pytest                             # data-validation tests, no FRED calls (synthetic data)
 
-uv run python -m src.etl.pipeline         # download + transform (skips cached files)
+uv run python -m src.etl.pipeline         # download + transform, both configs (skips cached files)
+uv run python -m src.etl.pipeline --config paper  # only the paper's data
 uv run python -m src.etl.pipeline --force # force re-download
 
 uv run python -m src.eda.run_all          # regenerate EDA plots (report/plots/, not versioned)

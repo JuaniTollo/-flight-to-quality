@@ -13,7 +13,7 @@ def synthetic_data_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Build a fake `data/raw/` tree with realistic schemas for each dataset.
 
     The shapes match what `pandas-datareader` returns for the FRED tickers
-    declared in `configs/datasets.yaml`, so the processor transforms
+    declared in `configs/paper.yaml` and `configs/eda.yaml`, so the processor transforms
     can run on it end-to-end.
     """
     root = tmp_path_factory.mktemp("repo")
@@ -67,18 +67,26 @@ def synthetic_data_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
     return root
 
 
-@pytest.fixture(scope="session")
-def synthetic_config_path(synthetic_data_root: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A YAML config pointing save_paths to the synthetic raw directory."""
-    cfg_dir = synthetic_data_root / "configs"
-    cfg_dir.mkdir(parents=True)
-    yaml_text = f"""\
+PAPER_YAML = """\
+datasets:
+  lotka_volterra:
+    source: "fred"
+    start_date: "1947-01-01"
+    frequency: "QE"
+    save_path: "{root}/data/raw/lotka_volterra.csv"
+    indicators:
+      PROFITS: "A053RC1Q027SBEA"
+      INVESTMENT: "GPDI"
+      RECESSION: "USREC"
+"""
+
+EDA_YAML = """\
 datasets:
   corporate_profits:
     source: "fred"
     start_date: "1947-01-01"
     frequency: "QE"
-    save_path: "{synthetic_data_root}/data/raw/corporate_profits.csv"
+    save_path: "{root}/data/raw/corporate_profits.csv"
     indicators:
       PROFITS_BEFORE_TAX: "A446RC1Q027SBEA"
       PROFITS_AFTER_TAX: "A448RC1Q027SBEA"
@@ -87,29 +95,36 @@ datasets:
     source: "fred"
     start_date: "1961-01-01"
     frequency: "A"
-    save_path: "{synthetic_data_root}/data/raw/global_growth.csv"
+    save_path: "{root}/data/raw/global_growth.csv"
     indicators:
       WGDP_PC_LEVEL: "NYGDPPCAPKDWLD"
   capital_cycle:
     source: "fred"
     start_date: "1947-01-01"
     frequency: "QE"
-    save_path: "{synthetic_data_root}/data/raw/capital_cycle.csv"
+    save_path: "{root}/data/raw/capital_cycle.csv"
     indicators:
       REAL_GDP: "GDPC1"
       REAL_INVESTMENT: "GPDIC1"
       REAL_INVENTORY_CHANGE: "CBIC1"
       RECESSION: "USREC"
-  lotka_volterra:
-    source: "fred"
-    start_date: "1947-01-01"
-    frequency: "QE"
-    save_path: "{synthetic_data_root}/data/raw/lotka_volterra.csv"
-    indicators:
-      PROFITS: "A053RC1Q027SBEA"
-      INVESTMENT: "GPDI"
-      RECESSION: "USREC"
 """
-    cfg = cfg_dir / "datasets.yaml"
-    cfg.write_text(yaml_text)
-    return cfg
+
+
+@pytest.fixture(scope="session")
+def synthetic_config_paths(synthetic_data_root: Path) -> dict[str, Path]:
+    """Mirror of configs/{paper,eda}.yaml with save_paths pointing to the synthetic raw dir."""
+    cfg_dir = synthetic_data_root / "configs"
+    cfg_dir.mkdir(parents=True)
+    out = {}
+    for name, text in (("paper", PAPER_YAML), ("eda", EDA_YAML)):
+        cfg = cfg_dir / f"{name}.yaml"
+        cfg.write_text(text.format(root=synthetic_data_root))
+        out[name] = cfg
+    return out
+
+
+@pytest.fixture(scope="session")
+def synthetic_config_path(synthetic_config_paths: dict[str, Path]) -> Path:
+    """The paper config (lotka_volterra), for tests that only need that dataset."""
+    return synthetic_config_paths["paper"]

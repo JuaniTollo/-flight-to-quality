@@ -1,0 +1,14 @@
+# Datos que sustentan las estimaciones del paper (src/experiment/*).
+# Todos los scripts leen data/processed/lotka_volterra.csv y usan las columnas
+# de NIVELES `PROFITS` e `INVESTMENT`; las tasas QoQ (100·Δln) se calculan en
+# src/experiment/rates.py. `RECESSION` sólo se usa para sombrear las figuras.
+datasets:
+  lotka_volterra:
+    source: "fred"
+    start_date: "1947-01-01"
+    frequency: "QE"
+    save_path: "data/raw/lotka_volterra.csv"
+    indicators:
+      PROFITS: "A053RC1Q027SBEA"   # Corporate Profits before tax, without IVA & CCAdj (NIPA)
+      INVESTMENT: "GPDI"           # Gross Private Domestic Investment (residential + nonresidential + inventories)
+      RECESSION: "USREC"           # NBER recession indicator

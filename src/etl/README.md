@@ -16,8 +16,14 @@ src/etl/
 
 ## Configuration
 
-All datasets are declared in [`configs/datasets.yaml`](../../configs/datasets.yaml).
-Each entry specifies:
+Datasets are declared in two YAML files under `configs/`:
+
+| file                                          | purpose                                                              |
+|-----------------------------------------------|----------------------------------------------------------------------|
+| [`paper.yaml`](../../configs/paper.yaml)      | `lotka_volterra` — the only data used by the estimates (`src/experiment/`) |
+| [`eda.yaml`](../../configs/eda.yaml)          | `corporate_profits`, `global_growth`, `capital_cycle` — Tapia replication figures (`src/eda/`) |
+
+Each dataset entry specifies:
 
 | field         | meaning                                         |
 |---------------|-------------------------------------------------|
@@ -32,6 +38,9 @@ Each entry specifies:
 ```bash
 # normal: skip already-downloaded raw files
 uv run python -m src.etl.pipeline
+
+# only the paper's data (configs/paper.yaml)
+uv run python -m src.etl.pipeline --config paper
 
 # re-download everything from FRED
 uv run python -m src.etl.pipeline --force
@@ -71,6 +80,6 @@ uv run pytest
 
 ## Adding a new dataset
 
-1. Append an entry to `configs/datasets.yaml`.
+1. Append an entry to `configs/paper.yaml` (if the estimates use it) or `configs/eda.yaml`.
 2. Add a `transform_<name>` function to `processor.py`, register it in `TRANSFORMS`.
 3. Add a row to `tests/test_etl.py` describing expected columns and invariants.

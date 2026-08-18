@@ -6,7 +6,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 
+from src.etl.paths import CONFIG_PATHS
 from src.etl.processor import (
     DataProcessor,
     transform_capital_cycle,
@@ -101,19 +103,34 @@ def test_corporate_profits_passthrough() -> None:
 
 # === Pipeline integration test (writes processed CSVs to a temp dir) ===
 
+# Qué dataset vive en qué config: paper.yaml alimenta src/experiment, eda.yaml sólo src/eda.
 EXPECTED_PROCESSED_COLUMNS = {
-    "lotka_volterra": {"PROFITS", "INVESTMENT", "RECESSION", "PROFITS_YOY", "INVEST_YOY", "P_z", "I_z"},
-    "global_growth": {"WGDP_PC_LEVEL", "GROWTH", "TREND_10Y"},
-    "capital_cycle": {"REAL_GDP", "REAL_INVESTMENT", "REAL_INVENTORY_CHANGE", "RECESSION", "INV_RATIO"},
-    "corporate_profits": {"PROFITS_BEFORE_TAX", "PROFITS_AFTER_TAX", "RECESSION"},
+    "paper": {
+        "lotka_volterra": {"PROFITS", "INVESTMENT", "RECESSION", "PROFITS_YOY", "INVEST_YOY", "P_z", "I_z"},
+    },
+    "eda": {
+        "global_growth": {"WGDP_PC_LEVEL", "GROWTH", "TREND_10Y"},
+        "capital_cycle": {"REAL_GDP", "REAL_INVESTMENT", "REAL_INVENTORY_CHANGE", "RECESSION", "INV_RATIO"},
+        "corporate_profits": {"PROFITS_BEFORE_TAX", "PROFITS_AFTER_TAX", "RECESSION"},
+    },
 }
 
 
-def test_processor_produces_expected_processed_csvs(synthetic_config_path: Path) -> None:
-    DataProcessor(synthetic_config_path).run()
+def test_real_configs_split_paper_vs_eda() -> None:
+    """configs/paper.yaml y configs/eda.yaml declaran exactamente los datasets esperados."""
+    for cfg_name, expected in EXPECTED_PROCESSED_COLUMNS.items():
+        with open(CONFIG_PATHS[cfg_name]) as f:
+            declared = set(yaml.safe_load(f)["datasets"])
+        assert declared == set(expected), f"{cfg_name}.yaml declares {declared}"
 
-    repo_root = synthetic_config_path.parents[1]
-    for name, expected_cols in EXPECTED_PROCESSED_COLUMNS.items():
+
+@pytest.mark.parametrize("cfg_name", ["paper", "eda"])
+def test_processor_produces_expected_processed_csvs(synthetic_config_paths: dict[str, Path], cfg_name: str) -> None:
+    cfg_path = synthetic_config_paths[cfg_name]
+    DataProcessor(cfg_path).run()
+
+    repo_root = cfg_path.parents[1]
+    for name, expected_cols in EXPECTED_PROCESSED_COLUMNS[cfg_name].items():
         out = repo_root / "data" / "processed" / f"{name}.csv"
         assert out.exists(), f"{name}: processed CSV not written"
         df = pd.read_csv(out, index_col=0, parse_dates=True)
